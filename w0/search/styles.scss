@@ -7,6 +7,7 @@ $font: arial;
     margin: 10px; 
     padding-top: 20px;
     padding-right: 20px; 
+    z-index: 10; 
 }
 
 .navlink {
@@ -32,6 +33,7 @@ $font: arial;
     border: 1px solid #dfe1e5;
     box-shadow: none;
     border-radius: 24px;
+
     height: 44px;
     margin: 0 auto;
     margin-top: 0px;
@@ -66,7 +68,7 @@ $font: arial;
 #viewport {
     position: absolute;
     top: 0;
-    width: 100%;
+    width: 99%;
     min-height: 100%;
     display: grid;
     grid-template-rows: auto 1fr auto;
@@ -111,13 +113,12 @@ img {
 
 .searchsection {
     position: relative; 
-    min-height: 500px;
-    margin-top: -100px
+    min-height: 200px;
 }
 .sss {
     margin: 0;
-    position: absolute;
-    top: 50%;
+    position: relative;
+    top: 40%;
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
@@ -125,6 +126,7 @@ img {
 
 .herodiv {
     width: 100%; 
+    padding: -100px; 
     display: flex; 
     justify-content: center;
 }
