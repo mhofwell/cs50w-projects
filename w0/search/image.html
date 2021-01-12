@@ -8,10 +8,40 @@
 </head>
 
 <body>
-    <form action="https://www.google.com/search">
-        <input type="text" name="q">
-        <input type="submit" value="Google Search">
-    </form>
+    <div id="viewport">
+        <div id="topnav">
+            <a class="navlink" href="index.html">Home</a>
+            <a class="navlink" href="advanced.html">Advanced</a>
+        </div>
+        <div class="searchsection">
+            <div class="subsection">
+                <div class="herodiv">
+                    <div class="heroimage">
+                        <img src="logo.png">
+                    </div>
+                </div>
+                <form action="https://www.google.com/search">
+                    <div class="mainform">
+                        <div class="searchbar">
+                            <input name="tbm" value="isch" type="hidden">
+                            <input class="searchfield" type="text" maxlength="2048" name="q" aria-autocomplete="both"
+                                aria-haspopup="false" autocomplete="off" autocorrect="off" autofocus="" role="combobox"
+                                spellcheck="false" title="Search" value="" aria-label="Search">
+                        </div>
+                    </div>
+                    <div class="buttonrow">
+                        <div class="buttons">
+                            <input class="button" type="submit" value="Google Image Search">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <footer class="footer">
+            <span class="ft">Canada</span>
+        </footer>
+    </div>
+
 </body>
 
 </html>

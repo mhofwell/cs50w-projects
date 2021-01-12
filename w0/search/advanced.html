@@ -8,10 +8,64 @@
 </head>
 
 <body>
-    <form action="https://www.google.com/search">
-        <input type="text" name="q">
-        <input type="submit" value="Google Search">
-    </form>
+    <div id="viewport2">
+        <div class="advsearch">
+            <div class="advnavlogo">
+                <a href="index.html">
+                    <img href="index.html" src="logo.png">
+                </a>
+            </div>
+            <div class="navrow">
+                <div class="navlink">
+                    <a class="navlink" href="index.html">Home</a>
+                </div>
+            </div>
+        </div>
+        <div class="afheader">
+            <div class="afheadertext">
+                <span class="afspan">Advanced Search</span>
+            </div>
+        </div>
+        <div class="searchsection">
+            <div class="advsubsection">
+                <form action="https://www.google.com/search" method="GET" name="f">
+                    <div class="mainform">
+                        <div class="afrow">
+                            <div class="formheader">
+                                <span class="formheadertext">Find pages with...</span>
+                            </div>
+
+                        </div>
+                        <div class="afrow">
+                            <span class="afcopy">all these words</span>
+                            <input type="text" value autofocus="autofocus" name="as_q" class="afsearch">
+                        </div>
+                        <div class="afrow">
+                            <span class="afcopy">this exact word or phrase</span>
+                            <input type="text" value="" autofocus="autofocus" name="as_epq" class="afsearch">
+                        </div>
+                        <div class="afrow">
+                            <span class="afcopy">any of these words</span>
+                            <input type="text" value="" autofocus="autofocus" name="as_oq" class="afsearch">
+                        </div>
+                        <div class="afrow">
+                            <span class="afcopy">none of these words</span>
+                            <input type="text" value="" autofocus="autofocus" name="as_eq" class="afsearch">
+                        </div>
+                        <div class="afrowbut">
+                            <div type="afbutton">
+                                <input class="asbutton" type="submit" value="Advanced Search">
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <footer class="footer">
+            <span class="ft">Canada</span>
+        </footer>
+    </div>
 </body>
 
 </html>
