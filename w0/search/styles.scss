@@ -8,6 +8,9 @@ $font: arial;
     height: 100px; 
     width: 100%; 
     z-index: 10; 
+    position:absolute;
+    top:0;
+    left:0;
 }
 
 .navlink {
@@ -79,24 +82,17 @@ $font: arial;
 }
 
 #viewport2 {
-    position: absolute;
-    top: 0;
-    width: 99%;
-    min-height: 100%;
-    min-width: 400px;
-    display: grid; 
-    grid-template-rows: 60px 80px auto 50px;
+    margin: 0; 
+    top: 0; 
+    left: 0;
 }
 
-#viewport {
-    position: absolute;
-    top: 0;
-    width: 99%;
-    min-height: 100%;
-    min-width: 400px;
-    display: grid; 
-    grid-template-rows: auto 1fr auto; 
-}
+ #viewport {
+    position:absolute;
+    top:0;
+    left:0;
+    width: 100%; 
+ }
 
 .buttonrow {
     display: flex; 
@@ -252,3 +248,8 @@ img {
 
 // www.google.ca/search?iflsig=AINFCbYAAAAAX_0g6JF3MsXORGBDaNkddwDtSpnov_Zp&q=bat&btnI=I
 
+html, body {
+    margin: 0;
+    top: 0; 
+    left: 0; 
+   }
