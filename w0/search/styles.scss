@@ -82,17 +82,26 @@ $font: arial;
 }
 
 #viewport2 {
-    margin: 0; 
-    top: 0; 
+    display: flex;
+    top: 0;
     left: 0;
+    width: 100%;
+    flex-direction: column;
+    flex-grow: 1;
+    height: 100%;
 }
 
- #viewport {
-    position:absolute;
-    top:0;
-    left:0;
-    width: 100%; 
- }
+
+#viewport {
+    display: flex;
+    top: 0;
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    flex-grow: 1;
+    height: 100%;
+}
+ 
 
 .buttonrow {
     display: flex; 
@@ -134,12 +143,13 @@ img {
     display: flex; 
     min-height: 200px;
     justify-content: center;
+    flex-grow: 1; 
+    align-items: center; 
 }
 .subsection {
     margin: 0;
     max-width: 500px;
     align-items: center;
-    padding-top: 50px;
 }
 
 .herodiv {
@@ -246,10 +256,11 @@ img {
     color: #333;
 }
 
-// www.google.ca/search?iflsig=AINFCbYAAAAAX_0g6JF3MsXORGBDaNkddwDtSpnov_Zp&q=bat&btnI=I
-
 html, body {
+    display: flex; 
     margin: 0;
     top: 0; 
-    left: 0; 
-   }
+    left: 0;
+    width: 100%;  
+    height: 100%; 
+}
