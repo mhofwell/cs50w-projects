@@ -6,6 +6,9 @@
   height: 100px;
   width: 100%;
   z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .navlink {
@@ -72,23 +75,16 @@
 }
 
 #viewport2 {
-  position: absolute;
+  margin: 0;
   top: 0;
-  width: 99%;
-  min-height: 100%;
-  min-width: 400px;
-  display: grid;
-  grid-template-rows: 60px 80px auto 50px;
+  left: 0;
 }
 
 #viewport {
   position: absolute;
   top: 0;
-  width: 99%;
-  min-height: 100%;
-  min-width: 400px;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+  left: 0;
+  width: 100%;
 }
 
 .buttonrow {
@@ -238,6 +234,12 @@ img {
 .formheadertext {
   font-family: arial;
   color: #333;
+}
+
+html, body {
+  margin: 0;
+  top: 0;
+  left: 0;
 }
 
 /*# sourceMappingURL=styles.css.map */
