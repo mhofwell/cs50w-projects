@@ -5,4 +5,14 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return HttpResponse("Hello, world!")
+    return render(request, "hello/index.html")
+
+
+def michael(request):
+    return HttpResponse("Hello, Michael!")
+
+
+def greet(request, name):
+    return render(request, "hello/greet.html", {
+        "name": name.capitalize()
+    })
