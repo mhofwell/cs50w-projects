@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from . import util
 from django.http import HttpResponse
+from markdown2 import Markdown
+
+md = Markdown()
 
 
 def index(request):
@@ -10,8 +13,11 @@ def index(request):
 
 
 def getpage(request, title):
-    page = util.get_entry(title)
-    # if page:
-    return render(request, page)
-    # else:
-    # return HttpResponse('<h1>404 Page was found</h1>')
+    try:
+        page = util.get_entry(title)
+        print(title)
+        htmlpage = md.convert(page)
+        print(htmlpage)
+        return HttpResponse(htmlpage)
+    except:
+        return HttpResponse('<h1>404 Page was not found</h1>')
