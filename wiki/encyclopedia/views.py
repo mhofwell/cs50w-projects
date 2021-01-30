@@ -29,8 +29,6 @@ def search(request):
         return HttpResponse(page)
     else:
         pagelist = util.list_entries()
-        print(pagelist)
-        # search throught them and save to a list
         f_list = []
         msg = "Sorry nothing matches your query!"
         for page in pagelist:
@@ -38,8 +36,6 @@ def search(request):
             q_l = q.lower()
             if page_l.find(q_l) != -1:
                 f_list.append(page)
-        print(f_list)
-        print(msg)
         return render(request, "encyclopedia/search.html", {
             "f_list": f_list,
             "msg": msg
