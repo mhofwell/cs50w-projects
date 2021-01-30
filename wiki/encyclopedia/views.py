@@ -15,9 +15,32 @@ def index(request):
 def getpage(request, title):
     try:
         page = util.get_entry(title)
-        print(title)
         htmlpage = md.convert(page)
-        print(htmlpage)
         return HttpResponse(htmlpage)
     except:
-        return HttpResponse('<h1>404 Page was not found</h1>')
+        return HttpResponse('<h1>Page was not found</h1>')
+
+
+def search(request):
+    print(request.GET['q'])
+    q = request.GET['q']
+    if util.get_entry(q):
+        page = getpage(request, q)
+        return HttpResponse(page)
+    else:
+        pagelist = util.list_entries()
+        print(pagelist)
+        # search throught them and save to a list
+        f_list = []
+        msg = "Sorry nothing matches your query!"
+        for page in pagelist:
+            page_l = page.lower()
+            q_l = q.lower()
+            if page_l.find(q_l) != -1:
+                f_list.append(page)
+        print(f_list)
+        print(msg)
+        return render(request, "encyclopedia/search.html", {
+            "f_list": f_list,
+            "msg": msg
+        })
