@@ -2,8 +2,14 @@ from django.shortcuts import render
 from . import util
 from django.http import HttpResponse
 from markdown2 import Markdown
+from django import forms
 
 md = Markdown()
+
+
+class NewPageForm(forms.Form):
+    title = forms.CharField(label="title")
+    content = forms.CharField(widget=forms.Textarea)
 
 
 def index(request):
@@ -19,6 +25,19 @@ def getpage(request, title):
         return HttpResponse(htmlpage)
     except:
         return HttpResponse('<h1>Page was not found</h1>')
+
+
+def new(request):
+    if request.method == "POST":
+        # Process the result of the incoming POST request
+        page = NewPageForm(request.POST)
+        if page.is_valid():
+            title = page.cleaned_data["title"]
+            content = page.cleaned_data["content"]
+            util.save_entry(title, content)
+    return render(request, "encyclopedia/new.html", {
+        "page": NewPageForm()
+    })
 
 
 def search(request):
