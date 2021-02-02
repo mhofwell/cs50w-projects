@@ -1,16 +1,17 @@
 from django.shortcuts import render
 from . import util
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from markdown2 import Markdown
 from django import forms
+from django.urls import reverse
 
 md = Markdown()
 
 
 class NewPageForm(forms.Form):
-    title = forms.CharField(label="Title", widget=forms.TextInput(
+    title = forms.CharField(label="title", widget=forms.TextInput(
         attrs={'class': 'form-control'}))
-    content = forms.CharField(label="Content", widget=forms.Textarea(
+    content = forms.CharField(label="content", widget=forms.Textarea(
         attrs={'class': 'form-control', 'cols': 50, 'rows': '10'}))
 
 
@@ -36,7 +37,11 @@ def new(request):
         if page.is_valid():
             title = page.cleaned_data["title"]
             content = page.cleaned_data["content"]
-            util.save_entry(title, content)
+            if util.get_entry(title):
+                return HttpResponse('<h1>Page already exists!</h1>')
+            else:
+                util.save_entry(title, content)
+                return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
     return render(request, "encyclopedia/new.html", {
         "page": NewPageForm()
 
