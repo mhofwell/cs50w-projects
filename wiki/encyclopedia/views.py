@@ -30,7 +30,10 @@ def getpage(request, title):
             "content": htmlpage
         })
     except:
-        return HttpResponse('<h1>Page was not found</h1>')
+        return render(request, "encyclopedia/error.html", {
+            "error": "Page not found!",
+            "title": "Error!"
+        })
 
 
 def new(request):

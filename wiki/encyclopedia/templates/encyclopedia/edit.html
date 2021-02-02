@@ -10,11 +10,5 @@
 {% block body %}
 {{ content|safe }}
 
-<form action="{% url 'edit' %}" method="POST">
-    <input type="hidden" value="{{ content }}">
-    <div class="edit-button">
-        <a href="">Edit</a>
-    </div>
-</form>
 
 {% endblock %}
