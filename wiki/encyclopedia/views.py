@@ -25,7 +25,10 @@ def getpage(request, title):
     try:
         mdpage = util.get_entry(title)
         htmlpage = md.convert(mdpage)
-        return HttpResponse(htmlpage)
+        return render(request, "encyclopedia/entry.html", {
+            "title": title,
+            "content": htmlpage
+        })
     except:
         return HttpResponse('<h1>Page was not found</h1>')
 
