@@ -42,3 +42,7 @@ h1 {
 .input-area {
     padding-bottom: 10px; 
 }
+
+.form-control{
+    resize: none; 
+}

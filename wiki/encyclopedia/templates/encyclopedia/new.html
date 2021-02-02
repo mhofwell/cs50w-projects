@@ -6,11 +6,11 @@ Create New
 
 {% block body %}
 
-<form action="{% url 'new' %}" method="POST">
-    <div class="page-form">
+<div class="page-form">
+    <form action="{% url 'new' %}" method="POST">
         <h1>Create A New Wiki!</h1>
         {% csrf_token %}
-        <div class="input-area">
+        <div>
             <label class="form-label">Title</label>
             {{page.title}}
             <label class="form-label">Content</label>
@@ -19,9 +19,9 @@ Create New
         <div>
             <input type="submit" value="Create" class="btn btn-primary">
         </div>
-    </div>
-</form>
+    </form>
+</div>
 
 
 
-{% endblock %}s
+{% endblock %}

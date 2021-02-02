@@ -10,9 +10,9 @@ md = Markdown()
 
 class NewPageForm(forms.Form):
     title = forms.CharField(label="title", widget=forms.TextInput(
-        attrs={'class': 'form-control'}))
+        attrs={'class': 'form-control', 'placeholder': 'Enter your title.'}))
     content = forms.CharField(label="content", widget=forms.Textarea(
-        attrs={'class': 'form-control', 'cols': 50, 'rows': '10'}))
+        attrs={'class': 'form-control', 'placeholder': 'Enter your content.', 'cols': 45, 'rows': '10'}))
 
 
 def index(request):
@@ -23,8 +23,8 @@ def index(request):
 
 def getpage(request, title):
     try:
-        page = util.get_entry(title)
-        htmlpage = md.convert(page)
+        mdpage = util.get_entry(title)
+        htmlpage = md.convert(mdpage)
         return HttpResponse(htmlpage)
     except:
         return HttpResponse('<h1>Page was not found</h1>')
