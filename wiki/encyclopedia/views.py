@@ -9,7 +9,8 @@ md = Markdown()
 
 class NewPageForm(forms.Form):
     title = forms.CharField(label="title")
-    content = forms.CharField(widget=forms.Textarea)
+    content = forms.CharField(widget=forms.Textarea(
+        attrs={'cols': 50, 'rows': '200'}))
 
 
 def index(request):
