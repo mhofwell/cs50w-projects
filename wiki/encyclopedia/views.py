@@ -36,6 +36,11 @@ def getpage(request, title):
         })
 
 
+def edit(request):
+    if request.method == "POST":
+        return HttpResponse("yay!")
+
+
 def new(request):
     if request.method == "POST":
         # Process the result of the incoming POST request
