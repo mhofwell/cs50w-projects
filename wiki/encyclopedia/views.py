@@ -8,9 +8,10 @@ md = Markdown()
 
 
 class NewPageForm(forms.Form):
-    title = forms.CharField(label="title")
-    content = forms.CharField(widget=forms.Textarea(
-        attrs={'cols': 50, 'rows': '200'}))
+    title = forms.CharField(label="Title", widget=forms.TextInput(
+        attrs={'class': 'form-control'}))
+    content = forms.CharField(label="Content", widget=forms.Textarea(
+        attrs={'class': 'form-control', 'cols': 50, 'rows': '10'}))
 
 
 def index(request):
@@ -38,6 +39,7 @@ def new(request):
             util.save_entry(title, content)
     return render(request, "encyclopedia/new.html", {
         "page": NewPageForm()
+
     })
 
 

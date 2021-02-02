@@ -5,16 +5,23 @@ Create New
 {% endblock %}
 
 {% block body %}
-<h1>Create A New Wiki!</h1>
 
 <form action="{% url 'new' %}" method="POST">
-    <div>
+    <div class="page-form">
+        <h1>Create A New Wiki!</h1>
         {% csrf_token %}
-        {{ page }}
-    </div>
-    <div>
-        <input type="submit" value="Create">
+        <div class="input-area">
+            <label class="form-label">Title</label>
+            {{page.title}}
+            <label class="form-label">Content</label>
+            {{page.content}}
+        </div>
+        <div>
+            <input type="submit" value="Create" class="btn btn-primary">
+        </div>
     </div>
 </form>
+
+
 
 {% endblock %}

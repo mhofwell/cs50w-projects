@@ -31,3 +31,14 @@ h1 {
 .sidebar h2 {
     margin-top: 5px;
 }
+
+.page-form{
+    display: flex; 
+    flex-direction: column;
+    max-width: 800px; 
+    padding: 25px; 
+}
+
+.input-area {
+    padding-bottom: 10px; 
+}
