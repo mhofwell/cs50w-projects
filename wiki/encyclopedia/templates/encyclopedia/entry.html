@@ -10,10 +10,9 @@
 {% block body %}
 {{ content|safe }}
 
-<form action="{% url 'edit' %}" method="POST">
-    {% csrf_token %}
-    <input type="hidden" value="{{ content }}">
-    <input type="hidden" value="{{ title }}">
+<form action="{% url 'edit' %}" method="GET">
+    <input type="hidden" value="{{ content }}" name="content">
+    <input type="hidden" value="{{ title }}" name="title">
     <input type="submit" value="Edit" class="btn btn-primary">
 </form>
 

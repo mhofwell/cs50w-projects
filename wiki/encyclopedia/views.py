@@ -37,7 +37,9 @@ def getpage(request, title):
 
 
 def edit(request):
-    if request.method == "POST":
+    content = (request.GET['content'])
+    title = (request.GET['title'])
+    if request.method == "GET":
         return HttpResponse("yay!")
 
 
