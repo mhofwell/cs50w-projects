@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from markdown2 import Markdown
 from django import forms
 from django.urls import reverse
+from random import randint
 
 md = Markdown()
 
@@ -19,6 +20,14 @@ def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
     })
+
+
+def random(request):
+    length = len(util.list_entries())
+    n = randint(0, length-1)
+    entries = util.list_entries()
+    title = entries[n]
+    return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
 
 
 def getpage(request, title):
