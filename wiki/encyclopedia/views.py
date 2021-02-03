@@ -37,10 +37,18 @@ def getpage(request, title):
 
 
 def edit(request):
-    content = (request.GET['content'])
-    title = (request.GET['title'])
-    if request.method == "GET":
-        return HttpResponse("yay!")
+    if request.method == "POST":
+        content = request.POST['edit']
+        title = request.POST['title']
+        util.save_entry(title, content)
+        return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
+    else:
+        title = (request.GET['title'])
+        entry = util.get_entry(title)
+        return render(request, "encyclopedia/edit.html", {
+            "entry": entry,
+            "title": title
+        })
 
 
 def new(request):

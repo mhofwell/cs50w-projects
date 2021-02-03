@@ -26,6 +26,8 @@ h1 {
     background-color: #f0f0f0;
     height: 100vh;
     padding: 20px;
+    min-width: 200px;
+    max-width: 200px;
 }
 
 .sidebar h2 {
@@ -45,4 +47,8 @@ h1 {
 
 .form-control{
     resize: none; 
+}
+
+.row {
+    flex-wrap: nowrap;
 }
