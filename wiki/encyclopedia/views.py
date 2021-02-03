@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from markdown2 import Markdown
 from django import forms
 from django.urls import reverse
+from random import randint
 
 md = Markdown()
 
@@ -34,6 +35,16 @@ def getpage(request, title):
             "error": "Page not found!",
             "title": "Error!"
         })
+
+
+def random(request):
+    # get length of list
+    length = len(util.list_entries())
+    # get random entry
+    n = randint(0, length-1)
+    entries = util.list_entries()
+    title = entries[n]
+    return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
 
 
 def edit(request):
