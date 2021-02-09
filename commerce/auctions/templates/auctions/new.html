@@ -6,5 +6,25 @@ New Listing
 
 {% block body %}
 
-<h1>Hey</h1>
+<div class="new-form">
+    <form action="{% url 'new' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            <div>
+                <label class="form-label">Listing Title</label>
+                {{ form.listing_title }}
+                <label class="form-label">Description</label>
+                {{ form.description }}
+            </div>
+            <label class="form-label">Category</label>
+            {{ form.category }}
+            <label class="form-label">Listing Price</label>
+            {{ form.price }}
+            <label class="form-label-image">Upload Image</label>
+            {{ form.image }}
+        </div>
+        <input type="submit" value="Create">
+    </form>
+</div>
+
 {% endblock %}

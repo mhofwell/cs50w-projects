@@ -1,20 +1,32 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.forms.widgets import NumberInput
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
-from .models import User
+from .models import User, AuctionListing
+
+CATEGORIES = [
+    ('apparel', 'Apparel'),
+    ('footwear', 'Footwear'),
+    ('home', 'Home'),
+    ('accessories', 'Accessories'),
+    ('sporting goods', 'Sporting Goods')
+]
 
 
 class CreateNewListing(forms.Form):
-    listing_title = forms.CharField(max_length=100)
-    description = forms.CharField(label="description", widget=forms.Textarea(
-        attrs={'class': 'form-control', 'placeholder': 'Enter a descripton of your listing.', 'cols': 45, 'rows': '10'}))
-    category = forms.CharField(max_length=25)
-    image = forms.ImageField()
-    price = forms.DecimalField(max_digits=6, decimal_places=2)
+    listing_title = forms.CharField(required="true", label="listing_title", max_length=100,  widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Enter your listing title.'}))
+    description = forms.CharField(required="true", label="description", widget=forms.Textarea(
+        attrs={'class': 'form-control', 'placeholder': 'Enter a descripton of your listing.', 'cols': 45, 'rows': 10}))
+    category = forms.CharField(required="true",
+                               label="Product Category", max_length=25, widget=forms.Select(choices=CATEGORIES))
+    image = forms.ImageField(required="true", label="image")
+    price = forms.DecimalField(required="true",
+                               label="price", max_digits=10, decimal_places=2, min_value=0, widget=forms.NumberInput(attrs={'placeholder': '$0.00'}))
 
 
 def index(request):
@@ -22,9 +34,15 @@ def index(request):
 
 
 def new(request):
-    pass
-    # if request.method == "POST":
-    #     new_listing = CreateNewListing(request.POST)
+    if request.method == "POST":
+        form = CreateNewListing(request.POST, request.FILES)
+        if form.is_valid():
+            title = form.cleaned_data["listing_title"]
+            description = form.cleaned_data["description"]
+            category = form.cleaned_data["category"]
+            price = form.cleaned_data["price"]
+            image = form.cleaned_data["image"]
+            print(f"{title}, {description}, {category}, {price}")
 
     return render(request, "auctions/new.html", {
         'form': CreateNewListing()

@@ -8,12 +8,13 @@ class User(AbstractUser):
 
 
 class AuctionListing(models.Model):
-    listing_title = models.CharField(max_length=100)
-    description = models.TextField(max_length=500)
-    category = models.CharField(max_length=25)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
-    current_bid = models.DecimalField(max_digits=6, decimal_places=2)
-    image = models.ImageField(upload_to='uploads/')
+    listing_title = models.CharField(max_length=100, default="None")
+    description = models.TextField(max_length=500, default="None")
+    category = models.CharField(max_length=25, default="None")
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    current_bid = models.DecimalField(
+        max_digits=6, decimal_places=2, default=0.00)
+    image = models.ImageField(upload_to='auctions/uploads/')
     date_created = models.DateField(auto_now_add=True)
 
 
