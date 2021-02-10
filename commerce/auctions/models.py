@@ -14,11 +14,11 @@ class User(AbstractUser):
 
 
 class AuctionListing(models.Model):
-    listing_title = models.CharField(max_length=100)
+    listing_title = models.CharField(max_length=100, blank=False)
     description = models.TextField(
-        max_length=500)
-    category = models.CharField(max_length=25)
-    starting_bid = models.FloatField(default=0.00)
+        max_length=500, blank=False)
+    category = models.CharField(max_length=25, blank=False)
+    starting_bid = models.FloatField(default=0.00, blank=False)
     current_bid = models.FloatField(default=0.00)
     image = models.ImageField(upload_to='auctions/uploads/')
     date_created = models.DateField(auto_now_add=True)
@@ -45,7 +45,7 @@ CATEGORIES = [
 
 class CreateNewListing(ModelForm):
     starting_bid = forms.DecimalField(
-        max_digits=10, decimal_places=2, min_value=0, initial=0.000)
+        max_digits=10, decimal_places=2, min_value=0, initial=0, required=True)
 
     class Meta:
         model = AuctionListing
@@ -60,6 +60,6 @@ class CreateNewListing(ModelForm):
         }
         widgets = {
             'listing_title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your listing title.'}),
-            'description': Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter a descripton of your listing.', 'cols': 45, 'rows': 10}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter a descripton of your listing.', 'cols': 45, 'rows': 10}),
             'category': forms.Select(choices=CATEGORIES),
         }
