@@ -14,25 +14,37 @@ class User(AbstractUser):
 
 
 class AuctionListing(models.Model):
-    listing_title = models.CharField(max_length=100, blank=False)
-    description = models.TextField(
-        max_length=500, blank=False)
-    category = models.CharField(max_length=25, blank=False)
-    starting_bid = models.FloatField(default=0.00, blank=False)
-    current_bid = models.FloatField(default=0.00)
-    image = models.ImageField(upload_to='auctions/uploads/')
-    date_created = models.DateField(auto_now_add=True)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='user')
+    listing_title = models.CharField(max_length=100, blank=True)
+    description = models.TextField(max_length=500, blank=True)
+    category = models.CharField(max_length=25, blank=True)
+    starting_bid = models.DecimalField(
+        blank=True, max_digits=15, decimal_places=2, default=0.00)
+    # current_bid = models.ForeignKey(
+    #     Bid, on_delete=models.CASCADE, related_name="current_bid")
+    image = models.URLField()
+    date_created = models.DateTimeField(auto_now_add=True)
 
 
 class Bid(models.Model):
-    pass
+    listing = models.ForeignKey(
+        AuctionListing, on_delete=models.CASCADE, related_name="listing", blank=True)
+    current_bid = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True)
+    bid_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="bid_by", null=True)
+    bid_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.listing} current bid is {self.current_bid} placed on {self.bid_time} by {self.bid_by}."
 
 
 class Comment(models.Model):
     pass
 
-# ModelForms
 
+# ModelForms
 
 CATEGORIES = [
     ('apparel', 'Apparel'),
@@ -40,13 +52,12 @@ CATEGORIES = [
     ('home', 'Home'),
     ('accessories', 'Accessories'),
     ('sporting goods', 'Sporting Goods')
+
+
 ]
 
 
 class CreateNewListing(ModelForm):
-    starting_bid = forms.DecimalField(
-        max_digits=10, decimal_places=2, min_value=0, initial=0, required=True)
-
     class Meta:
         model = AuctionListing
         fields = ['listing_title', 'description', 'category',
@@ -61,5 +72,7 @@ class CreateNewListing(ModelForm):
         widgets = {
             'listing_title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your listing title.'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter a descripton of your listing.', 'cols': 45, 'rows': 10}),
-            'category': forms.Select(choices=CATEGORIES),
+            'category': forms.Select(attrs={'class': 'form-control'}, choices=CATEGORIES),
+            'starting_bid': forms.NumberInput(attrs={'class': 'form-control'}),
+            'image': forms.TextInput(attrs={'class': 'form-control'})
         }
