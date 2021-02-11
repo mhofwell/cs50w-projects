@@ -12,6 +12,9 @@ from django.forms.widgets import NumberInput, TextInput, Textarea
 class User(AbstractUser):
     pass
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 class AuctionListing(models.Model):
     user = models.ForeignKey(
@@ -21,27 +24,32 @@ class AuctionListing(models.Model):
     category = models.CharField(max_length=25, blank=True)
     starting_bid = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2, default=0.00)
-    # current_bid = models.ForeignKey(
-    #     Bid, on_delete=models.CASCADE, related_name="current_bid")
     image = models.URLField()
     date_created = models.DateTimeField(auto_now_add=True)
 
-
-class Bid(models.Model):
-    listing = models.ForeignKey(
-        AuctionListing, on_delete=models.CASCADE, related_name="listing", blank=True)
-    current_bid = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True)
-    bid_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="bid_by", null=True)
-    bid_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-
     def __str__(self):
-        return f"{self.listing} current bid is {self.current_bid} placed on {self.bid_time} by {self.bid_by}."
+        return f"{self.listing_title} in category {self.category}"
 
 
 class Comment(models.Model):
     pass
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='user')
+    listing = models.ForeignKey(
+        AuctionListing, on_delete=models.CASCADE, related_name='listing')
+
+
+class Bid(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='user')
+    listing = models.ForeignKey(
+        AuctionListing, models.CASCADE, related_name='listing')
+    current_bid = models.DecimalField(
+        default=0.00, max_digits=10, decimal_places=2, null=True)
+    bid_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.listing} current bid is {self.current_bid} placed on {self.bid_time} by {self.bid_by}."
 
 
 # ModelForms
