@@ -9,6 +9,8 @@ from .utils import download_img
 import shutil
 from .models import User, CreateNewListing, AuctionListing, Bid, Comment
 
+IMG_ROOT = 'auctions/static/images'
+
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -23,11 +25,12 @@ def new(request):
     if request.method == "POST":
         form = CreateNewListing(request.POST, request.FILES)
         if form.is_valid():
-            price = form.cleaned_data["starting_bid"]
-            url = form.cleaned_data["url"]
+            url = form.cleaned_data["img_url"]
             filename = download_img(url)
             print(filename)
+            form.cleaned_data["filename"] = filename
             form.save()
+        return HttpResponseRedirect(reverse("index"))
 
     return render(request, "auctions/new.html", {
         'form': CreateNewListing()

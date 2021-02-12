@@ -12,7 +12,7 @@ New Listing
         <div>
             <div>
                 <label class="form-label">Listing Title</label>
-                {{ form.listing_title }}
+                {{ form.title }}
                 <label class="form-label">Description</label>
                 {{ form.description }}
             </div>
@@ -21,7 +21,8 @@ New Listing
             <label class="form-label">Starting Bid</label>
             {{ form.starting_bid }}
             <label class="form-label-image">Image URL</label>
-            {{ form.url }}
+            {{ form.img_url }}
+            {{ form.filename.as_hidden}}
         </div>
         <br>
         <input type="submit" value="Create" class="btn btn-primary">

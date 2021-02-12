@@ -15,8 +15,8 @@ class AuctionListing(models.Model):
     category = models.CharField(max_length=25, blank=True)
     starting_bid = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2)
-    url = models.URLField()
-    img_name = models.FilePathField(default="None")
+    img_url = models.URLField()
+    filename = models.CharField(max_length=100, default="None")
     date_created = models.DateTimeField(
         auto_now_add=True)
 
@@ -68,18 +68,18 @@ class CreateNewListing(ModelForm):
     class Meta:
         model = AuctionListing
         fields = ['title', 'description', 'category',
-                  'starting_bid', 'url']
+                  'starting_bid', 'filename', 'img_url']
         labels = {
             'title': 'title',
             'description': 'description',
             'category': 'category',
             'starting_bid': 'starting_bid',
-            'url': 'url'
+            'img_url': 'url'
         }
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your listing title.'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter a descripton of your listing.', 'cols': 45, 'rows': 10}),
             'category': forms.Select(attrs={'class': 'form-control'}, choices=CATEGORIES),
             'starting_bid': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '$0.00'}),
-            'url': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'www.example.com/yourimage.jpg'})
+            'img_url': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'www.example.com/yourimage.jpg'})
         }

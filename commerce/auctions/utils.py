@@ -1,6 +1,8 @@
 import requests
 import shutil
 
+IMG_ROOT = 'auctions/static/images'
+
 
 def download_img(url):
     filename = url.split("/")[-1]
@@ -9,11 +11,9 @@ def download_img(url):
         r.raw.decode_content = True
         with open(filename, 'wb') as f:
             shutil.copyfileobj(r.raw, f)
-        print("Image Successfully Downloaded: ", filename)
-        shutil.move(filename, 'auctions/static/images')
-        print("Image Successfully Moved: ", filename)
+        print("Image Successfully Downloaded:", filename)
+        shutil.move(filename, IMG_ROOT)
+        print("Image Successfully Moved:", filename)
         return filename
     else:
         print("Image could not be retrieved.")
-
-# NEWCOMMENTSSSs
