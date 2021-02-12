@@ -54,3 +54,5 @@ def download_img(request, url, form):
         shutil.move(filename, listing_dir)
         print(f"{filename} successfuly moved to:", listing_dir)
         return listing_dir
+
+# better
