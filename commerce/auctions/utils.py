@@ -15,3 +15,5 @@ def download_img(url):
         return filename
     else:
         print("Image could not be retrieved.")
+
+# NEWCOMMENTSSSs
