@@ -5,10 +5,8 @@ from django.forms.widgets import NumberInput
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-import requests
+from .utils import download_img
 import shutil
-# from .utils import download_img
-
 from .models import User, CreateNewListing, AuctionListing, Bid, Comment
 
 
@@ -27,8 +25,7 @@ def new(request):
         if form.is_valid():
             price = form.cleaned_data["starting_bid"]
             url = form.cleaned_data["url"]
-
-            print(f"{price}")
+            filename = download_img(url)
             form.save()
 
     return render(request, "auctions/new.html", {

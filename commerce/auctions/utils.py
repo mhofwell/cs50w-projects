@@ -10,6 +10,8 @@ def download_img(url):
         with open(filename, 'wb') as f:
             shutil.copyfileobj(r.raw, f)
         print("Image Successfully Downloaded: ", filename)
+        shutil.move(filename, 'auctions/static/images')
+        print("Image Successfully Moved: ", filename)
         return filename
     else:
         print("Image could not be retrieved.")
