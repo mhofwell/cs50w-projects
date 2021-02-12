@@ -26,6 +26,7 @@ def new(request):
             price = form.cleaned_data["starting_bid"]
             url = form.cleaned_data["url"]
             filename = download_img(url)
+            print(filename)
             form.save()
 
     return render(request, "auctions/new.html", {

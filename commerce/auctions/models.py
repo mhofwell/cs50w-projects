@@ -16,7 +16,7 @@ class AuctionListing(models.Model):
     starting_bid = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2)
     url = models.URLField()
-    image = models.ImageField(default="none")
+    img_name = models.FilePathField(default="None")
     date_created = models.DateTimeField(
         auto_now_add=True)
 
@@ -81,5 +81,5 @@ class CreateNewListing(ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter a descripton of your listing.', 'cols': 45, 'rows': 10}),
             'category': forms.Select(attrs={'class': 'form-control'}, choices=CATEGORIES),
             'starting_bid': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '$0.00'}),
-            'url': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'www.example.com'})
+            'url': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'www.example.com/yourimage.jpg'})
         }
