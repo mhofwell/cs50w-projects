@@ -6,10 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from .utils import download_img
-import shutil
 from .models import User, CreateNewListing, AuctionListing, Bid, Comment
-
-IMG_ROOT = 'auctions/static/images'
 
 
 def index(request):
@@ -26,14 +23,12 @@ def new(request):
         form = CreateNewListing(request.POST, request.FILES)
         if form.is_valid():
             url = form.cleaned_data["img_url"]
-            filename = download_img(url)
-            print(filename)
-            form.cleaned_data["filename"] = filename
+            path = download_img(request, url, form)
+            print(path)
             form.save()
         return HttpResponseRedirect(reverse("index"))
-
     return render(request, "auctions/new.html", {
-        'form': CreateNewListing()
+        'form': CreateNewListing(),
     })
 
 
