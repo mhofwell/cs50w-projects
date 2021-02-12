@@ -5,13 +5,19 @@ from django.forms.widgets import NumberInput
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+import requests
+import shutil
+# from .utils import download_img
 
-from .models import User, CreateNewListing, AuctionListing
+from .models import User, CreateNewListing, AuctionListing, Bid, Comment
 
 
 def index(request):
     return render(request, "auctions/index.html", {
-        'active_listings': AuctionListing.objects.all()
+        'active_listings': AuctionListing.objects.all(),
+        'users': User.objects.all(),
+        'bid': Bid.objects.all(),
+        'comment': Comment.objects.all()
     })
 
 
@@ -20,6 +26,8 @@ def new(request):
         form = CreateNewListing(request.POST, request.FILES)
         if form.is_valid():
             price = form.cleaned_data["starting_bid"]
+            url = form.cleaned_data["url"]
+
             print(f"{price}")
             form.save()
 
