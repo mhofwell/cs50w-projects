@@ -26,8 +26,11 @@ def new(request):
             filename = download_img(url)
             path = organize_img(request, filename, form)
             print(path)
-            # look at commit=False for the save() function to stop the commit and add data
             form.save()
+            title = form.cleaned_data["title"]
+            new_listing = AuctionListing.objects.get(title=f"{title}")
+            new_listing.img_path = f"{path}"
+            new_listing.save()
         return HttpResponseRedirect(reverse("index"))
     return render(request, "auctions/new.html", {
         'form': CreateNewListing(),

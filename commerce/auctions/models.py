@@ -16,7 +16,7 @@ class AuctionListing(models.Model):
     starting_bid = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2)
     img_url = models.URLField()
-    filename = models.CharField(max_length=100, default="None")
+    img_path = models.CharField(max_length=150, default="None")
     date_created = models.DateTimeField(
         auto_now_add=True)
 
@@ -68,13 +68,13 @@ class CreateNewListing(ModelForm):
     class Meta:
         model = AuctionListing
         fields = ['title', 'description', 'category',
-                  'starting_bid', 'filename', 'img_url']
+                  'starting_bid', 'img_url']
         labels = {
             'title': 'title',
             'description': 'description',
             'category': 'category',
             'starting_bid': 'starting_bid',
-            'img_url': 'url'
+            'img_url': 'img_url',
         }
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your listing title.'}),

@@ -5,6 +5,9 @@
 <ul>
     {% for listing in active_listings %}
     <li>{{ listing.title }} {{listing.description}} {{listing.starting_bid}}</li>
+    {% load static %}
+    <img src="{% static '{{listing.img_path}}'}">
+    <img src="{{listing.img_url}}">
     {% endfor %}
 </ul>
 

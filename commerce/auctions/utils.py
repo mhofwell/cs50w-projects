@@ -1,14 +1,12 @@
+from commerce.settings import STATIC_URL
 from django.http.response import HttpResponse
 import requests
 import shutil
 import os.path
 from os import path
 
-# Path variables
-MEDIA_ROOT = 'auctions/static/images'
-
-
 # Util functions
+
 
 def download_img(url):
     # set up all variables
@@ -30,7 +28,7 @@ def organize_img(request, filename, form):
     user_id = str(request.user.id)
     title = form.cleaned_data["title"]
 
-    user_root = os.path.join(MEDIA_ROOT, user_id)
+    user_root = os.path.join('auctions/'+STATIC_URL, 'images/'+user_id)
     listing_root = os.path.join(user_root, title)
     image_path = os.path.join(listing_root, filename)
 
@@ -44,4 +42,4 @@ def organize_img(request, filename, form):
 
     shutil.move(filename, listing_root)
     print(f"{filename} successfuly moved to:", image_path)
-    return image_path
+    return "images/"+user_id+"/"+title+"/"+filename
