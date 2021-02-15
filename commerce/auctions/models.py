@@ -16,7 +16,6 @@ class AuctionListing(models.Model):
     starting_bid = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2)
     img_url = models.URLField()
-    img_path = models.CharField(max_length=150, default="None")
     date_created = models.DateTimeField(
         auto_now_add=True)
 

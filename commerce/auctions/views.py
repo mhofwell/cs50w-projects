@@ -5,7 +5,6 @@ from django.forms.widgets import NumberInput
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .utils import download_img, organize_img
 from .models import User, CreateNewListing, AuctionListing, Bid, Comment
 
 
@@ -22,15 +21,7 @@ def new(request):
     if request.method == "POST":
         form = CreateNewListing(request.POST, request.FILES)
         if form.is_valid():
-            url = form.cleaned_data["img_url"]
-            filename = download_img(url)
-            path = organize_img(request, filename, form)
-            print(path)
             form.save()
-            title = form.cleaned_data["title"]
-            new_listing = AuctionListing.objects.get(title=f"{title}")
-            new_listing.img_path = f"{path}"
-            new_listing.save()
         return HttpResponseRedirect(reverse("index"))
     return render(request, "auctions/new.html", {
         'form': CreateNewListing(),

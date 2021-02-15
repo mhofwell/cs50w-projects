@@ -1,0 +1,18 @@
+body {
+    padding: 10px;
+}
+
+.form-control{
+    resize: none; 
+}
+
+.image{
+    max-width: 500px;
+    max-height: 500px;
+}
+
+img {
+    width: 200px;
+    height: 300px;
+    object-fit: contain;
+  }
