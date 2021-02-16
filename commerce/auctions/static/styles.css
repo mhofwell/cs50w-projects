@@ -1,18 +1,30 @@
 body {
     padding: 10px;
+    height: 100vh; 
 }
 
 .form-control{
     resize: none; 
 }
 
-.image{
-    max-width: 500px;
-    max-height: 500px;
-}
-
 img {
     width: 200px;
-    height: 300px;
+    height: 150px;
     object-fit: contain;
+  }
+
+  .listing {
+      display: block; 
+  }
+
+  .listing-container{
+      display: flex; 
+      flex-wrap: wrap;
+  }
+
+  .listing-item {
+    padding: 2px;
+  }
+  .listing-title {
+      display: flex; 
   }

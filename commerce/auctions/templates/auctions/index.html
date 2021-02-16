@@ -2,15 +2,27 @@
 
 {% block body %}
 <h2>Active Listings</h2>
-<ul>
+<div class="listing-container">
     {% for listing in active_listings %}
-    <li>{{ listing.title }} {{listing.description}} {{listing.starting_bid}}</li>
-    {% load static %}
-    <div class="image">
-        <img src="{{listing.img_url}}">
+    <div class="listing">
+        <div class="listing-title">
+            <div class="listing-item">
+                {{ listing.title }}
+            </div>
+            <div class="listing-item">
+                {{listing.starting_bid}}
+            </div>
+        </div>
+        <div>
+            <img src="{{listing.img_url}}">
+        </div>
+        <div class="listing-item">
+            {{listing.description}}
+        </div>
     </div>
     {% endfor %}
-</ul>
+</div>
+<input type="button" class="btn btn-primary" value="View">
 
 
 {% endblock %}
