@@ -28,12 +28,30 @@ img {
   flex-wrap: wrap;
 }
 
-.listing-item {
+.listing-description {
   padding: 2px;
+  white-space: no-wrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.listing-price {
+  padding: 2px;
+  align-items: center;
 }
 
 .listing-title {
   display: flex;
+}
+
+p {
+  height: 100%;
+  display: inline-block;
+  margin: 2px;
+}
+
+.active-header {
+  padding-bottom: 20px;
 }
 
 /*# sourceMappingURL=styles.css.map */

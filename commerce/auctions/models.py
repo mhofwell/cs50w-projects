@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from datetime import datetime, date, timezone
+from django.db.models.deletion import CASCADE, RESTRICT
 from django.forms import ModelForm
 from django import forms
 from django.forms.models import BaseInlineFormSet
@@ -13,11 +14,12 @@ class AuctionListing(models.Model):
     title = models.CharField(max_length=100, blank=True)
     description = models.TextField(max_length=500, blank=True)
     category = models.CharField(max_length=25, blank=True)
-    starting_bid = models.DecimalField(
+    price = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2)
     img_url = models.URLField()
     date_created = models.DateTimeField(
         auto_now_add=True)
+    Active = models.BooleanField(max_length=5, default="True")
 
     def __str__(self):
         return f"{self.title}"
@@ -26,6 +28,10 @@ class AuctionListing(models.Model):
 class User(AbstractUser):
     listings = models.ForeignKey(
         AuctionListing, models.SET_NULL, related_name="owner", null=True)
+    watchlist = models.ForeignKey(
+        AuctionListing, models.SET_NULL, related_name="watchlist", null=True)
+    won = models.ForeignKey(
+        AuctionListing, models.SET_NULL, related_name="won", null=True)
 
 
 class Comment(models.Model):
@@ -47,7 +53,9 @@ class Bid(models.Model):
     bid_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.listing} current bid is {self.current_bid} placed on {self.bid_time} by {self.bid_by}."
+        bid_time = self.bid_time
+        formatted_time = bid_time.strftime('%Y-%m-%d %H:%M:%S')
+        return f"{self.listing} current bid is {self.current_bid} placed on {formatted_time} by {self.user}."
 
 
 # ModelForms
@@ -67,18 +75,34 @@ class CreateNewListing(ModelForm):
     class Meta:
         model = AuctionListing
         fields = ['title', 'description', 'category',
-                  'starting_bid', 'img_url']
+                  'price', 'img_url']
         labels = {
             'title': 'title',
             'description': 'description',
             'category': 'category',
-            'starting_bid': 'starting_bid',
+            'price': 'price',
             'img_url': 'img_url',
         }
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your listing title.'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter a descripton of your listing.', 'cols': 45, 'rows': 10}),
             'category': forms.Select(attrs={'class': 'form-control'}, choices=CATEGORIES),
-            'starting_bid': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '$0.00'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '$0.00'}),
             'img_url': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'www.example.com/yourimage.jpg'})
         }
+
+
+class Comments(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['user', 'listing', 'comment']
+
+        lables = {
+            'user': 'user',
+            'listing': 'listing',
+            'comment': 'comment',
+        }
+
+    widgets = {
+
+    }

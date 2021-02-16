@@ -1,26 +1,31 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h2>Active Listings</h2>
+<div class=active-header>
+    <h2>Active Listings</h2>
+</div>
+
 <div class="listing-container">
     {% for listing in active_listings %}
     <div class="listing">
-        <div class="listing-title">
-            <div class="listing-item">
-                {{ listing.title }}
+        <form action="{% url 'index' %}" method=POST>
+            {% csrf_token %}
+            <div class="listing-title">
+                <h5>{{ listing.title }}</h5>
             </div>
-        </div>
-        <div>
-            <img src="{{listing.img_url}}">
-        </div>
-        <div class="listing-item">
-            <p>${{listing.starting_bid}}</p>
-        </div>
-        <div class="listing-item">
-            {{listing.description}}
-        </div>
+            <div>
+                <img src="{{listing.img_url}}">
+            </div>
+            <div class="listing-price">
+                <p>${{listing.price}}</p>
+            </div>
+            <div class="listing-description">
+                <p>{{listing.description}}</p>
+            </div>
+            <input type="submit" class="btn btn-primary" value="View">
+            <input type="hidden" value="{{listing.title}}" name="title">
+        </form>
     </div>
-    <input type="button" class="btn btn-primary" value="View">
     {% endfor %}
 </div>
 

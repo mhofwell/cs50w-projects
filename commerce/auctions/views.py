@@ -9,11 +9,22 @@ from .models import User, CreateNewListing, AuctionListing, Bid, Comment
 
 
 def index(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
     return render(request, "auctions/index.html", {
         'active_listings': AuctionListing.objects.all(),
         'users': User.objects.all(),
         'bid': Bid.objects.all(),
         'comment': Comment.objects.all()
+    })
+
+
+def getpage(request, title):
+    listing = AuctionListing.objects.get(title=f"{title}")
+    print(listing)
+    return render(request, "auctions/listingpage.html", {
+        'listing': listing
     })
 
 
