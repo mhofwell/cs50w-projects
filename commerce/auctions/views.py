@@ -22,20 +22,29 @@ def index(request):
 
 def getpage(request, title):
     listing = AuctionListing.objects.get(title=f"{title}")
-    # get current highest bid
+    bid = Bid.objects.get(listing=listing)
+    comments = Comment.objects.get(listing=listing)
+    current_bid = bid.current_bid
     return render(request, "auctions/listingpage.html", {
         'listing': listing,
         'new_bid': New_bid(),
+        'current_bid': current_bid,
+        'comment_form': Comment(),
+        'comments': comments
         # get all the comments for this bid.
         # send new comment ModelForm out to template.
-        # send current bid out to template.
     })
 
 
 def bid(request):
     # determine where to add the validator for the bid > price and current_bid
     return render(request, "auctions/listingpage.html", {
-        'new_bid': New_bid()
+    })
+
+
+def comment(request):
+    # determine where to add the validator for the bid > price and current_bid
+    return render(request, "auctions/listingpage.html", {
     })
 
 
