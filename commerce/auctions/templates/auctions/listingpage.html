@@ -4,10 +4,15 @@
 <div class=active-header>
     <form action="{% url 'bid' %}" method=POST>
         {%csrf_token%}
-        <h2>{{listing.title}}</h2>
-        <p>Price: {{listing.price}}</p>
-        <label class="form-label-image">Amount: </label>
-        {{ new_bid.current_bid }}
+        <h2>{{ listing.title }}</h2>
+        <p>{{ listing.user }}</p>
+        <p>{{ listing.date_created }}</p>
+        <p>Price: {{ listing.price }}</p>
+        <img src="{{ listing.img_url }}">
+        <div>
+            <label class="form-label-image">Amount: </label>
+            {{ new_bid.current_bid }}
+        </div>
         <input type="submit" value="Bid" class="btn btn-primary" name="bid">
     </form>
     <!-- display all comments -->
