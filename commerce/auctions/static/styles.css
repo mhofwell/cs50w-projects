@@ -51,7 +51,20 @@ p {
 }
 
 .active-header {
-  padding-bottom: 20px;
+  display: flex;
+}
+
+.listing-information {
+  max-width: 300px;
+}
+
+.listing-page-body {
+  display: flex;
+}
+
+.listing-page-bid {
+  max-width: 300px;
+  display: flex;
 }
 
 /*# sourceMappingURL=styles.css.map */

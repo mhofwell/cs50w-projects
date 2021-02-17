@@ -1,22 +1,42 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<div class=active-header>
-    <form action="{% url 'bid' %}" method=POST>
-        {%csrf_token%}
-        <h2>{{ listing.title }}</h2>
-        <p>{{ listing.user }}</p>
-        <p>{{ listing.date_created }}</p>
-        <p>Price: {{ listing.price }}</p>
-        <img src="{{ listing.img_url }}">
-        <div>
-            <label class="form-label-image">Amount: </label>
-            {{ new_bid.current_bid }}
-        </div>
-        <input type="submit" value="Bid" class="btn btn-primary" name="bid">
-    </form>
-    <!-- display all comments -->
-    <!-- create a comment form from ModelForm and submit to url comment route -->
+<div>
+    <h2>{{ listing.title }}</h2>
 </div>
+<form action="{% url 'bid' %}" method=POST>
+    {%csrf_token%}
+    <div class=listing-page-body>
+        <div>
+            <img src="{{ listing.img_url }}">
+        </div>
+        <div class="listing-information">
+            <div>
+                Posted by: {{ listing.user }}
+            </div>
+            <div>
+                Created on: {{ listing.date_created }}
+            </div>
+            <div>
+                Price: {{ listing.price }}
+            </div>
+            <div>
+                Current bid: {{ current_bid }}
+            </div>
+        </div>
+        <div class="listing-information">
+        </div>
+    </div>
+    <label>Amount: </label>
+    <div class="listing-page-bid">
+        {{ new_bid.current_bid }}
+        <input type="submit" value="Bid" class="btn btn-primary" name="bid">
+    </div>
+</form>
+<form action="{% url 'comment' %}">
+    <label </form>
 
-{% endblock %}
+        <!-- display all comments -->
+        <!-- create a comment form from ModelForm and submit to url comment route -->
+
+        {% endblock %}
