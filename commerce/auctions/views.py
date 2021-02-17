@@ -5,7 +5,7 @@ from django.forms.widgets import NumberInput
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .models import User, CreateNewListing, AuctionListing, Bid, Comment
+from .models import New_bid, User, CreateNewListing, AuctionListing, Bid, Comment
 
 
 def index(request):
@@ -22,20 +22,42 @@ def index(request):
 
 def getpage(request, title):
     listing = AuctionListing.objects.get(title=f"{title}")
-    print(listing)
+    # get current highest bid
     return render(request, "auctions/listingpage.html", {
-        'listing': listing
+        'listing': listing,
+        'new_bid': New_bid(),
+        # get all the comments for this bid.
+        # send new comment ModelForm out to template.
+        # send current bid out to template.
+    })
+
+
+def bid(request):
+    # determine where to add the validator for the bid > price and current_bid
+    return render(request, "auctions/listingpage.html", {
+        'new_bid': New_bid()
     })
 
 
 def new(request):
+    user = User.objects.get(pk=request.user.id)
+    print(user)
     if request.method == "POST":
-        form = CreateNewListing(request.POST, request.FILES)
+        form = CreateNewListing(request.POST)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.user = user
+            obj.save()
+            # clean up into a utility
+            starting_bid = form.cleaned_data['price']
+            title = form.cleaned_data['title']
+            listing = AuctionListing.objects.get(title=title)
+            new_bid = Bid(user=user, listing=listing,
+                          current_bid=starting_bid)
+            new_bid.save()
         return HttpResponseRedirect(reverse("index"))
     return render(request, "auctions/new.html", {
-        'form': CreateNewListing(),
+        'form': CreateNewListing()
     })
 
 

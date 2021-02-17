@@ -7,6 +7,7 @@
 
 <div class="listing-container">
     {% for listing in active_listings %}
+    {% if listing.active %}
     <div class="listing">
         <form action="{% url 'index' %}" method=POST>
             {% csrf_token %}
@@ -26,6 +27,7 @@
             <input type="hidden" value="{{listing.title}}" name="title">
         </form>
     </div>
+    {% endif %}
     {% endfor %}
 </div>
 

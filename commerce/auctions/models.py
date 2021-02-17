@@ -6,50 +6,58 @@ from django.forms import ModelForm
 from django import forms
 from django.forms.models import BaseInlineFormSet
 from django.forms.widgets import NumberInput, TextInput, Textarea
+from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
+
+CATEGORIES = [
+    ('apparel', 'Apparel'),
+    ('footwear', 'Footwear'),
+    ('home', 'Home'),
+    ('accessories', 'Accessories'),
+    ('sporting goods', 'Sporting Goods')
+]
 
 
 # Models
 
+
+class User(AbstractUser):
+    pass
+
+
 class AuctionListing(models.Model):
+    user = models.ForeignKey(
+        User, related_name='listings', on_delete=CASCADE)
     title = models.CharField(max_length=100, blank=True)
     description = models.TextField(max_length=500, blank=True)
-    category = models.CharField(max_length=25, blank=True)
+    category = models.CharField(max_length=25, blank=True, choices=CATEGORIES)
     price = models.DecimalField(
-        blank=True, max_digits=15, decimal_places=2)
+        blank=True, max_digits=15, decimal_places=2, validators=[MinValueValidator(1)])
     img_url = models.URLField()
     date_created = models.DateTimeField(
         auto_now_add=True)
-    Active = models.BooleanField(max_length=5, default="True")
+    active = models.BooleanField(max_length=5, default="True")
 
     def __str__(self):
-        return f"{self.title}"
-
-
-class User(AbstractUser):
-    listings = models.ForeignKey(
-        AuctionListing, models.SET_NULL, related_name="owner", null=True)
-    watchlist = models.ForeignKey(
-        AuctionListing, models.SET_NULL, related_name="watchlist", null=True)
-    won = models.ForeignKey(
-        AuctionListing, models.SET_NULL, related_name="won", null=True)
+        return f"{self.user}: {self.title}"
 
 
 class Comment(models.Model):
-    pass
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='commentor', default="None")
+        User, on_delete=models.CASCADE, related_name='comments', default="None")
     listing = models.ForeignKey(
-        AuctionListing, on_delete=models.CASCADE, related_name='listing', default="None")
+        AuctionListing, on_delete=models.CASCADE, related_name='comments', default="None")
     comment = models.TextField(max_length=500, blank=True, default="None")
+
+    # have the comment display with {comment} by {user}
 
 
 class Bid(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='bidder', default="None")
+        User, on_delete=models.CASCADE, related_name='bids', default="None")
     listing = models.ForeignKey(
-        AuctionListing, models.CASCADE, related_name='product', default="None")
+        AuctionListing, models.CASCADE, related_name='bids', default="None")
     current_bid = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True)
+        max_digits=10, decimal_places=2, null=True, validators=[MinValueValidator(1)])
     bid_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
@@ -59,17 +67,6 @@ class Bid(models.Model):
 
 
 # ModelForms
-
-CATEGORIES = [
-    ('apparel', 'Apparel'),
-    ('footwear', 'Footwear'),
-    ('home', 'Home'),
-    ('accessories', 'Accessories'),
-    ('sporting goods', 'Sporting Goods')
-
-
-]
-
 
 class CreateNewListing(ModelForm):
     class Meta:
@@ -95,14 +92,45 @@ class CreateNewListing(ModelForm):
 class Comments(ModelForm):
     class Meta:
         model = Comment
-        fields = ['user', 'listing', 'comment']
+        fields = ['comment']
 
         lables = {
-            'user': 'user',
-            'listing': 'listing',
             'comment': 'comment',
         }
 
-    widgets = {
+        widgets = {
 
-    }
+        }
+
+
+class New_bid(ModelForm):
+    class Meta:
+        model = Bid
+        fields = ['current_bid']
+
+        lables = {
+            'current_bid': 'current_bid',
+        }
+
+        widgets = {
+            'current_bid': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '$0.00'})
+        }
+
+    # def clean(self):
+    #     project = self.listing
+
+    #     super(User_bid, self).clean()
+
+    #     current_bid = self.cleaned_data.get('current_bid')
+    #     = self.cleaned_data.get('password')
+
+    #     # validating the username and password
+    #     if len(username) < 5:
+    #         self._errors['username'] = self.error_class(
+    #             ['A minimum of 5 characters is required'])
+
+    #     if len(password) < 8:
+    #         self._errors['password'] = self.error_class(
+    #             ['Password length should not be less than 8 characters'])
+
+    #     return self.cleaned_data

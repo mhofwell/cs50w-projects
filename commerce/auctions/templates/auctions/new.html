@@ -7,7 +7,7 @@ New Listing
 {% block body %}
 
 <div class="new-form">
-    <form action="{% url 'new' %}" method="POST" enctype="multipart/form-data">
+    <form action="{% url 'new' %}" method="POST">
         {% csrf_token %}
         <div>
             <div>
@@ -19,7 +19,7 @@ New Listing
             <label class="form-label">Category</label>
             {{ form.category }}
             <label class="form-label">Starting Bid</label>
-            {{ form.starting_bid }}
+            {{ form.price }}
             <label class="form-label-image">Image URL</label>
             {{ form.img_url }}
         </div>

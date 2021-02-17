@@ -2,7 +2,16 @@
 
 {% block body %}
 <div class=active-header>
-    <h2>{{listing.title}}</h2>
+    <form action="{% url 'bid' %}" method=POST>
+        {%csrf_token%}
+        <h2>{{listing.title}}</h2>
+        <p>Price: {{listing.price}}</p>
+        <label class="form-label-image">Amount: </label>
+        {{ new_bid.current_bid }}
+        <input type="submit" value="Bid" class="btn btn-primary" name="bid">
+    </form>
+    <!-- display all comments -->
+    <!-- create a comment form from ModelForm and submit to url comment route -->
 </div>
 
 {% endblock %}
