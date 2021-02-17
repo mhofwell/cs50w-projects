@@ -7,6 +7,7 @@ from django import forms
 from django.forms.models import BaseInlineFormSet
 from django.forms.widgets import NumberInput, TextInput, Textarea
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
+from django.contrib.auth.decorators import login_required
 
 CATEGORIES = [
     ('apparel', 'Apparel'),
@@ -41,14 +42,23 @@ class AuctionListing(models.Model):
         return f"{self.user}: {self.title}"
 
 
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    item = models.ManyToManyField(AuctionListing)
+
+    def __str__(self):
+        return f"{self.user}'s watch list"
+
+
 class Comment(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments', default="None")
     listing = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE, related_name='comments', default="None")
-    comment = models.TextField(max_length=500, blank=True, default="None")
+    comment = models.TextField(max_length=500, blank=True)
 
-    # have the comment display with {comment} by {user}
+    def __str__(self):
+        return (f"{self.comment} by {self.user}")
 
 
 class Bid(models.Model):
@@ -67,7 +77,6 @@ class Bid(models.Model):
 
 
 # ModelForms
-
 class CreateNewListing(ModelForm):
     class Meta:
         model = AuctionListing
@@ -89,7 +98,7 @@ class CreateNewListing(ModelForm):
         }
 
 
-class Comments(ModelForm):
+class Comment_form(ModelForm):
     class Meta:
         model = Comment
         fields = ['comment']
@@ -99,7 +108,7 @@ class Comments(ModelForm):
         }
 
         widgets = {
-
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Great looking item...', 'cols': 10, 'rows': 3}),
         }
 
 

@@ -21,7 +21,7 @@
                 <p>${{listing.price}}</p>
             </div>
             <div class="listing-description">
-                <p>{{listing.description}}</p>
+                <p>{{listing.description|truncatewords:5}}</p>
             </div>
             <input type="submit" class="btn btn-primary" value="View">
             <input type="hidden" value="{{listing.title}}" name="title">

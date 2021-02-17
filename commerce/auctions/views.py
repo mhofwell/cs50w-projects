@@ -5,7 +5,10 @@ from django.forms.widgets import NumberInput
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .models import New_bid, User, CreateNewListing, AuctionListing, Bid, Comment
+from .models import Comment_form, New_bid, User, CreateNewListing, AuctionListing, Bid, Comment, Watchlist
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from django.contrib import messages
 
 
 def index(request):
@@ -22,32 +25,69 @@ def index(request):
 
 def getpage(request, title):
     listing = AuctionListing.objects.get(title=f"{title}")
+    user = User.objects.get(pk=request.user.id)
+    creator = listing.user
     bid = Bid.objects.get(listing=listing)
-    comments = Comment.objects.get(listing=listing)
     current_bid = bid.current_bid
-    return render(request, "auctions/listingpage.html", {
-        'listing': listing,
-        'new_bid': New_bid(),
-        'current_bid': current_bid,
-        'comment_form': Comment(),
-        'comments': comments
-        # get all the comments for this bid.
-        # send new comment ModelForm out to template.
+    print(listing.id)
+    if Comment.objects.filter(listing=listing).exists():
+        comments = Comment.objects.filter(listing=listing)
+        return render(request, "auctions/listingpage.html", {
+            'listing': listing,
+            'new_bid': New_bid(),
+            'current_bid': current_bid,
+            'comment_form': Comment_form(),
+            'comments': comments
+        })
+    else:
+        return render(request, "auctions/listingpage.html", {
+            'listing': listing,
+            'new_bid': New_bid(),
+            'current_bid': current_bid,
+            'comment_form': Comment_form()
+        })
+
+
+def watchlist(request):
+    user = User.objects.get(pk=request.user.id)
+    watchlist = Watchlist.objects.get(user=user)
+    return render(request, "auctions/watchlist.html", {
+        'watchlist': watchlist
     })
 
 
+@login_required
+def add_to_watchlist(request, listing_id):
+    listing_to_save = get_object_or_404(AuctionListing, pk=listing_id)
+    title = listing_to_save.title
+    # Check if the item already exists in that user watchlist
+    if Watchlist.objects.filter(user=request.user, item=listing_id).exists():
+        messages.add_message(request, messages.ERROR,
+                             "You already have it in your watchlist.")
+        return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
+    # Get the user watchlist or create it if it doesn't exists
+    user_list, create = Watchlist.objects.get_or_create(user=request.user)
+    # Add the item through the ManyToManyField (Watchlist => item)
+    user_list.item.add(listing_to_save)
+    messages.add_message(request, messages.SUCCESS,
+                         "Successfully added to your watchlist")
+    return HttpResponseRedirect(reverse("watchlist"))
+
+
+@ login_required
 def bid(request):
     # determine where to add the validator for the bid > price and current_bid
     return render(request, "auctions/listingpage.html", {
     })
 
 
+@ login_required
 def comment(request):
-    # determine where to add the validator for the bid > price and current_bid
     return render(request, "auctions/listingpage.html", {
     })
 
 
+@ login_required
 def new(request):
     user = User.objects.get(pk=request.user.id)
     print(user)

@@ -12,19 +12,27 @@
         </div>
         <div class="listing-information">
             <div>
-                Posted by: {{ listing.user }}
+                <label class="form-label">Posted by: {{ listing.user }}</label>
             </div>
             <div>
-                Created on: {{ listing.date_created }}
+                <label class="form-label">Created on: {{ listing.date_created }}</label>
             </div>
             <div>
-                Price: {{ listing.price }}
+                <label class="form-label">Price: ${{ listing.price }}</label>
             </div>
             <div>
-                Current bid: {{ current_bid }}
+                <label class="form-label">Current bid: ${{ current_bid }}</label>
             </div>
+            {% if user.is_authenticated %}
+            <div>
+                <a href="{% url 'add_to_watchlist' listing.id %}">Add to Watchlist</a>
+            </div>
+            {% endif %}
         </div>
         <div class="listing-information">
+            <div>
+                <label class="form-label">Description: {{ listing.description }}</label>
+            </div>
         </div>
     </div>
     <label>Amount: </label>
@@ -33,10 +41,17 @@
         <input type="submit" value="Bid" class="btn btn-primary" name="bid">
     </div>
 </form>
+<div>
+    {% for comment in comments %}
+    {{ comment.comment }}
+    {% endfor %}
+</div>
 <form action="{% url 'comment' %}">
-    <label </form>
+    <label class="form-label-image">Add A Comment!</label>
+    {{ comment_form.comment}}
+    <input type="submit" value="Comment" name="comment" class="btn btn-primary">
+</form>
 
-        <!-- display all comments -->
-        <!-- create a comment form from ModelForm and submit to url comment route -->
 
-        {% endblock %}
+
+{% endblock %}
