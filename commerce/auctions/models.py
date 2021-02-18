@@ -4,7 +4,6 @@ from datetime import datetime, date, timezone
 from django.db.models.deletion import CASCADE, RESTRICT
 from django.forms import ModelForm
 from django import forms
-from django.forms.models import BaseInlineFormSet
 from django.forms.widgets import NumberInput, TextInput, Textarea
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.contrib.auth.decorators import login_required
@@ -33,6 +32,8 @@ class AuctionListing(models.Model):
     category = models.CharField(max_length=25, blank=True, choices=CATEGORIES)
     price = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2, validators=[MinValueValidator(1)])
+    highest_bid = models.DecimalField(
+        blank=True, max_digits=15, decimal_places=2)
     img_url = models.URLField()
     date_created = models.DateTimeField(
         auto_now_add=True)
@@ -66,14 +67,14 @@ class Bid(models.Model):
         User, on_delete=models.CASCADE, related_name='bids', default="None")
     listing = models.ForeignKey(
         AuctionListing, models.CASCADE, related_name='bids', default="None")
-    current_bid = models.DecimalField(
+    bid = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, validators=[MinValueValidator(1)])
     bid_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         bid_time = self.bid_time
         formatted_time = bid_time.strftime('%Y-%m-%d %H:%M:%S')
-        return f"Current bid is {self.current_bid} placed on {formatted_time} by {self.user}."
+        return f"Current bid is {self.bid} placed on {formatted_time} by {self.user}."
 
 
 # ModelForms
@@ -115,31 +116,12 @@ class Comment_form(ModelForm):
 class New_bid(ModelForm):
     class Meta:
         model = Bid
-        fields = ['current_bid']
+        fields = ['bid']
 
         lables = {
-            'current_bid': 'current_bid',
+            'bid': 'bid',
         }
 
         widgets = {
-            'current_bid': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '$0.00'})
+            'bid': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '$0.00'})
         }
-
-    # def clean(self):
-    #     project = self.listing
-
-    #     super(User_bid, self).clean()
-
-    #     current_bid = self.cleaned_data.get('current_bid')
-    #     = self.cleaned_data.get('password')
-
-    #     # validating the username and password
-    #     if len(username) < 5:
-    #         self._errors['username'] = self.error_class(
-    #             ['A minimum of 5 characters is required'])
-
-    #     if len(password) < 8:
-    #         self._errors['password'] = self.error_class(
-    #             ['Password length should not be less than 8 characters'])
-
-    #     return self.cleaned_data

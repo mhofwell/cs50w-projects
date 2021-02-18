@@ -25,17 +25,12 @@ def index(request):
 
 def getpage(request, title):
     listing = AuctionListing.objects.get(title=f"{title}")
-    user = User.objects.get(pk=request.user.id)
-    creator = listing.user
-    bid = Bid.objects.get(listing=listing)
-    current_bid = bid.current_bid
     print(listing.id)
     if Comment.objects.filter(listing=listing).exists():
         comments = Comment.objects.filter(listing=listing)
         return render(request, "auctions/listingpage.html", {
             'listing': listing,
             'new_bid': New_bid(),
-            'current_bid': current_bid,
             'comment_form': Comment_form(),
             'comments': comments
         })
@@ -43,7 +38,6 @@ def getpage(request, title):
         return render(request, "auctions/listingpage.html", {
             'listing': listing,
             'new_bid': New_bid(),
-            'current_bid': current_bid,
             'comment_form': Comment_form()
         })
 
@@ -52,17 +46,12 @@ def watchlist(request):
     user = User.objects.get(pk=request.user.id)
     watchlist_object = Watchlist.objects.get(user=user)
     listings = watchlist_object.item.all()
-    length = len(listings)
-    bid_list = []
-    for i in range(length):
-        bid_list += listings[i].bids.all()
     return render(request, "auctions/watchlist.html", {
         'watchlist': listings,
-        'bids': bid_list
     })
 
 
-@login_required
+@ login_required
 def add_to_watchlist(request, listing_id):
     listing_to_save = get_object_or_404(AuctionListing, pk=listing_id)
     title = listing_to_save.title
@@ -81,10 +70,11 @@ def add_to_watchlist(request, listing_id):
 
 
 @ login_required
-def bid(request):
+def bid(request, title):
     # determine where to add the validator for the bid > price and current_bid
-    return render(request, "auctions/listingpage.html", {
-    })
+    pass
+    # return render(request, "auctions/listingpage.html", {
+    # })
 
 
 @ login_required
@@ -104,12 +94,12 @@ def new(request):
             obj.user = user
             obj.save()
             # clean up into a utility
-            starting_bid = form.cleaned_data['price']
-            title = form.cleaned_data['title']
-            listing = AuctionListing.objects.get(title=title)
-            new_bid = Bid(user=user, listing=listing,
-                          current_bid=starting_bid)
-            new_bid.save()
+            # starting_bid = form.cleaned_data['price']
+            # title = form.cleaned_data['title']
+            # listing = AuctionListing.objects.get(title=title)
+            # new_bid = Bid(user=user, listing=listing,
+            #               current_bid=starting_bid)
+            # new_bid.save()
         return HttpResponseRedirect(reverse("index"))
     return render(request, "auctions/new.html", {
         'form': CreateNewListing()

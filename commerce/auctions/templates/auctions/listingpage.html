@@ -4,43 +4,49 @@
 <div>
     <h2>{{ listing.title }}</h2>
 </div>
-<form action="{% url 'bid' %}" method=POST>
-    {%csrf_token%}
-    <div class=listing-page-body>
+<div class=listing-page-body>
+    <div>
+        <img src="{{ listing.img_url }}">
+    </div>
+    <div class="listing-information">
         <div>
-            <img src="{{ listing.img_url }}">
+            <label class="form-label">Posted by: {{ listing.user }}</label>
         </div>
-        <div class="listing-information">
-            <div>
-                <label class="form-label">Posted by: {{ listing.user }}</label>
-            </div>
-            <div>
-                <label class="form-label">Created on: {{ listing.date_created }}</label>
-            </div>
-            <div>
-                <label class="form-label">Price: ${{ listing.price }}</label>
-            </div>
-            <div>
-                <label class="form-label">Current bid: ${{ current_bid }}</label>
-            </div>
-            {% if user.is_authenticated %}
-            <div>
-                <a href="{% url 'add_to_watchlist' listing.id %}">Add to Watchlist</a>
-            </div>
-            {% endif %}
+        <div>
+            <label class="form-label">Created on: {{ listing.date_created }}</label>
         </div>
-        <div class="listing-information">
-            <div>
-                <label class="form-label">Description: {{ listing.description }}</label>
-            </div>
+        <div>
+            <label class="form-label">Price: ${{ listing.price }}</label>
+        </div>
+        <div>
+            <label class="form-label">Current bid: ${{ current_bid }}</label>
+        </div>
+        {% if user.is_authenticated %}
+        <div>
+            <a href="{% url 'add_to_watchlist' listing.id %}">Add to Watchlist</a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="listing-information">
+        <div>
+            <label class="form-label">Description: {{ listing.description }}</label>
         </div>
     </div>
+</div>
+{% if user.is_authenticated %}
+<form action="{% url 'bid' listing.title %}" method=POST>
+    {%csrf_token%}
     <label>Amount: </label>
     <div class="listing-page-bid">
-        {{ new_bid.current_bid }}
-        <input type="submit" value="Bid" class="btn btn-primary" name="bid">
+        {{ new_bid.bid }}
+        <input type="submit" value="Bid" class="btn btn-primary" name="new_bid">
     </div>
 </form>
+{% else %}
+<div>
+    Please login to bid!
+</div>
+{% endif %}
 <div>
     {% for comment in comments %}
     {{ comment.comment }}
