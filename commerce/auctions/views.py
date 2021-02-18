@@ -50,9 +50,15 @@ def getpage(request, title):
 
 def watchlist(request):
     user = User.objects.get(pk=request.user.id)
-    watchlist = Watchlist.objects.get(user=user)
+    watchlist_object = Watchlist.objects.get(user=user)
+    listings = watchlist_object.item.all()
+    length = len(listings)
+    bid_list = []
+    for i in range(length):
+        bid_list += listings[i].bids.all()
     return render(request, "auctions/watchlist.html", {
-        'watchlist': watchlist
+        'watchlist': listings,
+        'bids': bid_list
     })
 
 

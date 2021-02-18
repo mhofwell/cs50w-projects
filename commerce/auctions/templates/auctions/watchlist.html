@@ -1,6 +1,15 @@
 {% extends "auctions/layout.html" %}
 {% block body %}
 
-{{ watchlist }}
+{% for listing in watchlist %}
+<a href="{% url 'getpage' listing.title %}"><b>{{ listing.title }}</b></a>
 
+Price: ${{ listing.price }}
+{{ listing.description }}
+<br>
+<!-- {{ listing.bid.current_bid }} -->
+
+<img src="{{ listing.img_url }}">
+<br>
+{% endfor %}
 {% endblock %}

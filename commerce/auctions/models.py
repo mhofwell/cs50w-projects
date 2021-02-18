@@ -44,10 +44,10 @@ class AuctionListing(models.Model):
 
 class Watchlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ManyToManyField(AuctionListing)
+    item = models.ManyToManyField(AuctionListing, related_name="watchlist")
 
     def __str__(self):
-        return f"{self.user}'s watch list"
+        return f"{self.user}'s watch list."
 
 
 class Comment(models.Model):
@@ -73,7 +73,7 @@ class Bid(models.Model):
     def __str__(self):
         bid_time = self.bid_time
         formatted_time = bid_time.strftime('%Y-%m-%d %H:%M:%S')
-        return f"{self.listing} current bid is {self.current_bid} placed on {formatted_time} by {self.user}."
+        return f"Current bid is {self.current_bid} placed on {formatted_time} by {self.user}."
 
 
 # ModelForms
