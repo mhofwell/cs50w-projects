@@ -1,5 +1,6 @@
 from django.urls import path
-
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
@@ -14,4 +15,4 @@ urlpatterns = [
     path("add/<int:listing_id>",
          views.add_to_watchlist, name="add_to_watchlist"),
     path("listings/<str:title>", views.getpage, name="getpage")
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
