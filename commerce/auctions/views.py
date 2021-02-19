@@ -70,11 +70,31 @@ def add_to_watchlist(request, listing_id):
 
 
 @ login_required
-def bid(request, title):
-    # determine where to add the validator for the bid > price and current_bid
+def bid(request):
+    if request.method == "POST":
+        # get user details
+        user_id = request.user.id
+        user = User.objects.get(pk=user_id)
+        # get listing details
+        listing_title = request.POST["listing.title"]
+        listing = AuctionListing.objects.get(title=listing_title)
+        # get current bid object
+        bid_obj = New_bid(request.POST)
+        # check if bid object is valid
+        if bid_obj.is_valid():
+            # add required fields to bid object
+            bid_obj.save(commit=False)
+            bid_obj.user = user
+            bid_obj.listing = listing
+            bid_obj.save()
+            # check to see if bid is the higest bid and save if so
+            new_bid = request.POST["new_bid.bid"]
+            starting_bid = listing.starting_bid
+            highest_bid = listing.highest_bid
+            if new_bid > starting_bid and new_bid > highest_bid:
+                listing.highest_bid = new_bid
+
     pass
-    # return render(request, "auctions/listingpage.html", {
-    # })
 
 
 @ login_required

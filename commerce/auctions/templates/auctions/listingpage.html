@@ -44,6 +44,9 @@
     <div class="listing-page-bid">
         {{ new_bid.bid }}
         <input type="submit" value="Bid" class="btn btn-primary" name="new_bid">
+        <input type="hidden" value="{{ listing.current_bid }}">
+        <input type="hidden" value="{{ listing.starting_bid }}">
+        <input type="hidden" value="{{ listing.title }}">
     </div>
 </form>
 {% else %}

@@ -18,11 +18,19 @@
                 <img src="{{listing.img_url}}">
             </div>
             <div class="listing-price">
-                <p>${{listing.price}}</p>
+                <label><strong>Price: </strong> ${{listing.starting_bid}}</label>
+            </div>
+            <div class="listing-price">
+                {% if listing.current_bid %}
+                <label><strong>Current Bid: ${{listing.current_bid}}</strong></label>
+                {% else %}
+                <label><strong>No bids yet!</strong></label>
+                {% endif %}
             </div>
             <div class="listing-description">
-                <p>{{listing.description|truncatewords:5}}</p>
+                {{listing.description|truncatewords:5}}
             </div>
+            <br>
             <input type="submit" class="btn btn-primary" value="View">
             <input type="hidden" value="{{listing.title}}" name="title">
         </form>
