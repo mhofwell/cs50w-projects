@@ -10,16 +10,20 @@
     </div>
     <div class="listing-information">
         <div>
-            <label class="form-label">Posted by: {{ listing.user }}</label>
+            <label class="form-label"><strong>Posted by: </strong>{{ listing.user }}</label>
         </div>
         <div>
-            <label class="form-label">Created on: {{ listing.date_created }}</label>
+            <label class="form-label"><strong>Created on: </strong>{{ listing.date_created }}</label>
         </div>
         <div>
-            <label class="form-label">Price: ${{ listing.price }}</label>
+            <label class="form-label"><strong>Price: </strong>${{ listing.starting_bid }}</label>
         </div>
         <div>
-            <label class="form-label">Current bid: ${{ current_bid }}</label>
+            {% if listing.highest_bid %}
+            <label class="form-label"><strong>Current bid: </strong>${{ listing.highest_bid }}</label>
+            {% else %}
+            <label class="form-label"><strong>Current bid: </strong>No bidders yet.</label>
+            {% endif %}
         </div>
         {% if user.is_authenticated %}
         <div>
@@ -29,14 +33,14 @@
     </div>
     <div class="listing-information">
         <div>
-            <label class="form-label">Description: {{ listing.description }}</label>
+            <label class="form-label"><strong>Description: </strong>{{ listing.description }}</label>
         </div>
     </div>
 </div>
 {% if user.is_authenticated %}
 <form action="{% url 'bid' listing.title %}" method=POST>
     {%csrf_token%}
-    <label>Amount: </label>
+    <label><strong>Amount: </strong></label>
     <div class="listing-page-bid">
         {{ new_bid.bid }}
         <input type="submit" value="Bid" class="btn btn-primary" name="new_bid">
@@ -53,7 +57,7 @@
     {% endfor %}
 </div>
 <form action="{% url 'comment' %}">
-    <label class="form-label-image">Add A Comment!</label>
+    <label class="form-label-image"><strong>Add A Comment!</strong></label>
     {{ comment_form.comment}}
     <input type="submit" value="Comment" name="comment" class="btn btn-primary">
 </form>

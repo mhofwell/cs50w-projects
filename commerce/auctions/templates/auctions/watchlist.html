@@ -3,9 +3,19 @@
 
 {% for listing in watchlist %}
 <a href="{% url 'getpage' listing.title %}"><b>{{ listing.title }}</b></a>
-
-Price: ${{ listing.price }}
-{{ listing.description }}
+<div>
+    <strong>Price: </strong>{{ listing.starting_bid }}
+</div>
+<div>
+    <strong>Description: </strong>{{ listing.description }}
+</div>
+<div>
+    {% if listing.current_bid %}
+    <strong>Bids: </strong>{{ listing.current_bid }}
+    {% else %}
+    <strong>No bidders yet!</strong>
+    {% endif %}
+</div>
 <br>
 <!-- {{ listing.bid.current_bid }} -->
 

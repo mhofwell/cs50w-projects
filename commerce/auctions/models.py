@@ -30,7 +30,7 @@ class AuctionListing(models.Model):
     title = models.CharField(max_length=100, blank=True)
     description = models.TextField(max_length=500, blank=True)
     category = models.CharField(max_length=25, blank=True, choices=CATEGORIES)
-    price = models.DecimalField(
+    starting_bid = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2, validators=[MinValueValidator(1)])
     highest_bid = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2)
@@ -82,19 +82,19 @@ class CreateNewListing(ModelForm):
     class Meta:
         model = AuctionListing
         fields = ['title', 'description', 'category',
-                  'price', 'img_url']
+                  'starting_bid', 'img_url']
         labels = {
             'title': 'title',
             'description': 'description',
             'category': 'category',
-            'price': 'price',
+            'starting_bid': 'starting_bid',
             'img_url': 'img_url',
         }
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your listing title.'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter a descripton of your listing.', 'cols': 45, 'rows': 10}),
             'category': forms.Select(attrs={'class': 'form-control'}, choices=CATEGORIES),
-            'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '$0.00'}),
+            'starting_bid': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '$0.00'}),
             'img_url': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'www.example.com/yourimage.jpg'})
         }
 
