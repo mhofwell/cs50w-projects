@@ -39,6 +39,7 @@
 </div>
 {% if user.is_authenticated %}
 <form action="{% url 'bid' listing.title %}" method=POST>
+    <!-- The error I think is because you're passing in listing.title as part of the request, try and remove it -->
     {%csrf_token%}
     <label><strong>Amount: </strong></label>
     <div class="listing-page-bid">

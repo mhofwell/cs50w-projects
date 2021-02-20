@@ -70,14 +70,14 @@ def add_to_watchlist(request, listing_id):
 
 
 @ login_required
-def bid(request):
+def bid(request, title):
+    print(title)
     if request.method == "POST":
         # get user details
         user_id = request.user.id
         user = User.objects.get(pk=user_id)
         # get listing details
-        listing_title = request.POST["listing.title"]
-        listing = AuctionListing.objects.get(title=listing_title)
+        listing = AuctionListing.objects.get(title=title)
         # get current bid object
         bid_obj = New_bid(request.POST)
         # check if bid object is valid
@@ -93,8 +93,9 @@ def bid(request):
             highest_bid = listing.highest_bid
             if new_bid > starting_bid and new_bid > highest_bid:
                 listing.highest_bid = new_bid
-
-    pass
+            messages.add_message(request, messages.ERROR,
+                                 "You need to match or exceed the current highest bid or price.")
+            return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
 
 
 @ login_required

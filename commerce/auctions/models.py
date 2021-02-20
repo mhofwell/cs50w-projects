@@ -33,7 +33,7 @@ class AuctionListing(models.Model):
     starting_bid = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2, validators=[MinValueValidator(1)])
     highest_bid = models.DecimalField(
-        blank=True, max_digits=15, decimal_places=2)
+        blank=True, default=0, max_digits=15, decimal_places=2)
     img_url = models.URLField()
     date_created = models.DateTimeField(
         auto_now_add=True)
@@ -64,12 +64,12 @@ class Comment(models.Model):
 
 class Bid(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='bids', default="None")
+        User, on_delete=models.CASCADE, related_name='bids')
     listing = models.ForeignKey(
-        AuctionListing, models.CASCADE, related_name='bids', default="None")
+        AuctionListing, models.CASCADE, related_name='bids')
     bid = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, validators=[MinValueValidator(1)])
-    bid_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+        max_digits=10, null=True, decimal_places=2, validators=[MinValueValidator(1)])
+    bid_time = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         bid_time = self.bid_time
