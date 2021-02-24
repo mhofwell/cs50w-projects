@@ -66,7 +66,7 @@ class Bid(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='bids')
     listing = models.ForeignKey(
-        AuctionListing, models.CASCADE, related_name='bids')
+        AuctionListing, on_delete=models.CASCADE, related_name='bids')
     bid = models.DecimalField(
         max_digits=10, null=True, decimal_places=2, validators=[MinValueValidator(1)])
     bid_time = models.DateTimeField(auto_now_add=True, null=True)

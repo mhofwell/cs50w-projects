@@ -42,13 +42,19 @@ def getpage(request, title):
         })
 
 
+@ login_required
 def watchlist(request):
     user = User.objects.get(pk=request.user.id)
-    watchlist_object = Watchlist.objects.get(user=user)
-    listings = watchlist_object.item.all()
-    return render(request, "auctions/watchlist.html", {
-        'watchlist': listings,
-    })
+    if Watchlist.objects.filter(user=user).exists():
+        watchlist_object = Watchlist.objects.get(user=user)
+        listings = watchlist_object.item.all()
+        return render(request, "auctions/watchlist.html", {
+            'watchlist': listings,
+        })
+    else:
+        messages.add_message(request, messages.ERROR,
+                             "You need to add an item to your watchlist first!")
+        return HttpResponseRedirect(reverse("index"))
 
 
 @ login_required
@@ -71,31 +77,34 @@ def add_to_watchlist(request, listing_id):
 
 @ login_required
 def bid(request, title):
-    print(title)
     if request.method == "POST":
         # get user details
-        user_id = request.user.id
-        user = User.objects.get(pk=user_id)
+        user = User.objects.get(pk=request.user.id)
         # get listing details
         listing = AuctionListing.objects.get(title=title)
         # get current bid object
-        bid_obj = New_bid(request.POST)
+        bid = New_bid(request.POST)
         # check if bid object is valid
-        if bid_obj.is_valid():
+        if bid.is_valid():
             # add required fields to bid object
-            bid_obj.save(commit=False)
+            bid_obj = bid.save(commit=False)
             bid_obj.user = user
             bid_obj.listing = listing
             bid_obj.save()
             # check to see if bid is the higest bid and save if so
-            new_bid = request.POST["new_bid.bid"]
+            new_bid = bid_obj.bid
             starting_bid = listing.starting_bid
             highest_bid = listing.highest_bid
             if new_bid > starting_bid and new_bid > highest_bid:
                 listing.highest_bid = new_bid
-            messages.add_message(request, messages.ERROR,
-                                 "You need to match or exceed the current highest bid or price.")
-            return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
+                listing.save()
+                messages.add_message(request, messages.SUCCESS,
+                                     "Bid added!")
+                return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
+            else:
+                messages.add_message(request, messages.ERROR,
+                                     "You need to match or exceed the current price or highest bid.")
+                return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
 
 
 @ login_required

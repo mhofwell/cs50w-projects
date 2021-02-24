@@ -20,9 +20,9 @@
         </div>
         <div>
             {% if listing.highest_bid %}
-            <label class="form-label"><strong>Current bid: </strong>${{ listing.highest_bid }}</label>
+            <label class="form-label"><strong>Highest bid: </strong>${{ listing.highest_bid }}</label>
             {% else %}
-            <label class="form-label"><strong>Current bid: </strong>No bidders yet.</label>
+            <label class="form-label"><strong>Highest bid: </strong>No bidders yet.</label>
             {% endif %}
         </div>
         {% if user.is_authenticated %}
