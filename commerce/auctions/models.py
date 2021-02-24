@@ -56,7 +56,7 @@ class Comment(models.Model):
         User, on_delete=models.CASCADE, related_name='comments', default="None")
     listing = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE, related_name='comments', default="None")
-    comment = models.TextField(max_length=500, blank=True)
+    user_comment = models.TextField(max_length=500, blank=True)
 
     def __str__(self):
         return (f"{self.comment} by {self.user}")
@@ -102,14 +102,14 @@ class CreateNewListing(ModelForm):
 class Comment_form(ModelForm):
     class Meta:
         model = Comment
-        fields = ['comment']
+        fields = ['user_comment']
 
         lables = {
-            'comment': 'comment',
+            'user_comment': 'user_comment',
         }
 
         widgets = {
-            'comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Great looking item...', 'cols': 10, 'rows': 3}),
+            'user_comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Great looking item...', 'cols': 10, 'rows': 3}),
         }
 
 

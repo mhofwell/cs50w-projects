@@ -56,14 +56,21 @@
 </div>
 {% endif %}
 <div>
-    {% for comment in comments %}
-    {{ comment.comment }}
-    {% endfor %}
+    <hr>
+    <h5>Comments!</h5>
+    <ul>
+        {% for comment in comments %}
+        <li>{{ comment.user_comment }} by {{comment.user}}</li>
+        {% endfor %}
+    </ul>
+    <hr>
 </div>
-<form action="{% url 'comment' %}">
+<form action="{% url 'comment' %}" method="POST">
+    {% csrf_token %}
     <label class="form-label-image"><strong>Add A Comment!</strong></label>
-    {{ comment_form.comment}}
+    {{ comment_form.user_comment}}
     <input type="submit" value="Comment" name="comment" class="btn btn-primary">
+    <input type="hidden" value="{{ listing.title }}" name="title" class="btn btn-primary">
 </form>
 
 
