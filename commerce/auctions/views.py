@@ -109,8 +109,19 @@ def bid(request, title):
 
 @ login_required
 def comment(request):
-    return render(request, "auctions/listingpage.html", {
-    })
+    user = User.objects.get(pk=request.user.id)
+    if request.method == "POST":
+        obj = Comment_form(request.POST)
+        title = request.POST['title']
+        print(title)
+        if obj.is_valid:
+            comment_obj = obj.save(commit=False)
+            print(comment_obj.user_comment)
+            listing = AuctionListing.objects.get(title=title)
+            comment_obj.listing = listing
+            comment_obj.user = user
+            comment_obj.save()
+        return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
 
 
 @ login_required
