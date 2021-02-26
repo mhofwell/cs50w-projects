@@ -27,6 +27,9 @@ def getpage(request, title):
     user = request.user.id
     listing = AuctionListing.objects.get(title=f"{title}")
     creator = listing.user.id
+    highest_bid = listing.highest_bid_user
+    print(highest_bid.pk)
+    print(user)
     if Comment.objects.filter(listing=listing).exists():
         comments = Comment.objects.filter(listing=listing)
         return render(request, "auctions/listingpage.html", {
@@ -34,14 +37,18 @@ def getpage(request, title):
             'new_bid': New_bid(),
             'comment_form': Comment_form(),
             'comments': comments,
-            'current_user': user,
             'creator': creator,
+            'current_user': user,
+            'highest_bid_user_id': highest_bid.pk
         })
     else:
         return render(request, "auctions/listingpage.html", {
             'listing': listing,
             'new_bid': New_bid(),
-            'comment_form': Comment_form()
+            'comment_form': Comment_form(),
+            'current_user': user,
+            'creator': creator,
+            'highest_bid_user_id': highest_bid.pk
         })
 
 
@@ -91,15 +98,10 @@ def add_to_watchlist(request, listing_id):
 @ login_required
 def bid(request, title):
     if request.method == "POST":
-        # get user details
         user = User.objects.get(pk=request.user.id)
-        # get listing details
         listing = AuctionListing.objects.get(title=title)
-        # get current bid object
         bid = New_bid(request.POST)
-        # check if bid object is valid
         if bid.is_valid():
-            # add required fields to bid object
             bid_obj = bid.save(commit=False)
             bid_obj.user = user
             bid_obj.listing = listing
@@ -112,6 +114,8 @@ def bid(request, title):
                 listing.highest_bid = new_bid
                 listing.highest_bid_user = user
                 listing.save()
+                listing_id = listing.id
+                add_to_watchlist(request, listing_id)
                 messages.add_message(request, messages.SUCCESS,
                                      "Bid added!")
                 return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
@@ -148,13 +152,6 @@ def new(request):
             obj = form.save(commit=False)
             obj.user = user
             obj.save()
-            # clean up into a utility
-            # starting_bid = form.cleaned_data['price']
-            # title = form.cleaned_data['title']
-            # listing = AuctionListing.objects.get(title=title)
-            # new_bid = Bid(user=user, listing=listing,
-            #               current_bid=starting_bid)
-            # new_bid.save()
         return HttpResponseRedirect(reverse("index"))
     return render(request, "auctions/new.html", {
         'form': CreateNewListing()

@@ -3,6 +3,9 @@
 {% block body %}
 <div>
     <h2>{{ listing.title }}</h2>
+    {% if highest_bid_user_id == current_user and listing.active == False %}
+    <h3><strong>YOU WON THIS BID!</strong></h3>
+    {% endif %}
 </div>
 <div class=listing-page-body>
     <div>
