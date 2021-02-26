@@ -51,6 +51,7 @@ def close(request, title):
     listing = AuctionListing.objects.get(title=title, user=user)
     listing.active = False
     listing.save()
+
     return HttpResponseRedirect(reverse("index"))
 
 
@@ -109,6 +110,7 @@ def bid(request, title):
             highest_bid = listing.highest_bid
             if new_bid > starting_bid and new_bid > highest_bid:
                 listing.highest_bid = new_bid
+                listing.highest_bid_user = user
                 listing.save()
                 messages.add_message(request, messages.SUCCESS,
                                      "Bid added!")
