@@ -34,6 +34,8 @@ class AuctionListing(models.Model):
         blank=True, max_digits=15, decimal_places=2, validators=[MinValueValidator(1)])
     highest_bid = models.DecimalField(
         blank=True, default=0, max_digits=15, decimal_places=2)
+    highest_bid_user = models.ForeignKey(
+        User, related_name='winner', blank=True, null=True, on_delete=CASCADE)
     img_url = models.URLField()
     date_created = models.DateTimeField(
         auto_now_add=True)
@@ -55,11 +57,11 @@ class Comment(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments', default="None")
     listing = models.ForeignKey(
-        AuctionListing, on_delete=models.CASCADE, related_name='comments', default="None")
-    user_comment = models.TextField(max_length=500, blank=True)
+        AuctionListing, on_delete=models.CASCADE, related_name='comments')
+    user_comment = models.TextField(max_length=500, blank=True, default="None")
 
     def __str__(self):
-        return (f"{self.comment} by {self.user}")
+        return (f"{self.user_comment} by {self.user}")
 
 
 class Bid(models.Model):
