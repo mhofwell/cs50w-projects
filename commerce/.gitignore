@@ -3,3 +3,5 @@ auctions/static/images/
 auctions/migrations/
 *.jpg
 *.sqlite3cde .
+*/__pycache__/*
+db.sqlite3
