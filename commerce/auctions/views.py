@@ -51,6 +51,7 @@ def close(request, title):
     listing = AuctionListing.objects.get(title=title, user=user)
     listing.active = False
     listing.save()
+    return HttpResponseRedirect(reverse("index"))
 
 
 @ login_required
