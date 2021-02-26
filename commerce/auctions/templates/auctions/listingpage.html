@@ -12,6 +12,11 @@
         <div>
             <label class="form-label"><strong>Posted by: </strong>{{ listing.user }}</label>
         </div>
+        {% if current_user == creator %}
+        <div>
+            <a href="{% url 'close' listing.title %}"><strong>Close</strong></a>
+        </div>
+        {% endif %}
         <div>
             <label class="form-label"><strong>Created on: </strong>{{ listing.date_created }}</label>
         </div>

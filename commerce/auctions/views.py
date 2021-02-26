@@ -24,15 +24,18 @@ def index(request):
 
 
 def getpage(request, title):
+    user = request.user.id
     listing = AuctionListing.objects.get(title=f"{title}")
-    print(listing.id)
+    creator = listing.user.id
     if Comment.objects.filter(listing=listing).exists():
         comments = Comment.objects.filter(listing=listing)
         return render(request, "auctions/listingpage.html", {
             'listing': listing,
             'new_bid': New_bid(),
             'comment_form': Comment_form(),
-            'comments': comments
+            'comments': comments,
+            'current_user': user,
+            'creator': creator,
         })
     else:
         return render(request, "auctions/listingpage.html", {
@@ -40,6 +43,14 @@ def getpage(request, title):
             'new_bid': New_bid(),
             'comment_form': Comment_form()
         })
+
+
+@ login_required
+def close(request, title):
+    user = request.user
+    listing = AuctionListing.objects.get(title=title, user=user)
+    listing.active = False
+    listing.save()
 
 
 @ login_required
