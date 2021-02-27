@@ -8,13 +8,13 @@ from django.forms.widgets import NumberInput, TextInput, Textarea
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.contrib.auth.decorators import login_required
 
-CATEGORIES = [
-    ('apparel', 'Apparel'),
-    ('footwear', 'Footwear'),
-    ('home', 'Home'),
-    ('accessories', 'Accessories'),
-    ('sporting goods', 'Sporting Goods')
-]
+
+class Categories(models.TextChoices):
+    APPAREL = 'Apparel'
+    FOOTWEAR = 'Footwear'
+    HOME = 'Home'
+    ACCESSORIES = 'Accessories'
+    SPORTING_GOODS = 'Sporting Goods'
 
 
 # Models
@@ -29,7 +29,8 @@ class AuctionListing(models.Model):
         User, related_name='listings', on_delete=CASCADE)
     title = models.CharField(max_length=100, blank=True)
     description = models.TextField(max_length=500, blank=True)
-    category = models.CharField(max_length=25, blank=True, choices=CATEGORIES)
+    category = models.CharField(
+        max_length=150, blank=True, choices=Categories.choices)
     starting_bid = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2, validators=[MinValueValidator(1)])
     highest_bid = models.DecimalField(
@@ -95,7 +96,7 @@ class CreateNewListing(ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your listing title.'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter a descripton of your listing.', 'cols': 45, 'rows': 10}),
-            'category': forms.Select(attrs={'class': 'form-control'}, choices=CATEGORIES),
+            'category': forms.Select(attrs={'class': 'form-control'}, choices=Categories.choices),
             'starting_bid': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '$0.00'}),
             'img_url': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'www.example.com/yourimage.jpg'})
         }

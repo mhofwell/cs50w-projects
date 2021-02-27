@@ -6,7 +6,13 @@
 </div>
 <hr>
 {% for listing in watchlist %}
+{% if listing.active %}
 <a href="{% url 'getpage' listing.title %}"><b>{{ listing.title }}</b></a>
+<div>
+    {% if listing.highest_bid_user == user %}
+    <h4>You have won this bid!</h4>
+    {% endif %}
+</div>
 <div>
     <strong>Price: </strong>{{ listing.starting_bid }}
 </div>
@@ -14,8 +20,8 @@
     <strong>Description: </strong>{{ listing.description }}
 </div>
 <div>
-    {% if listing.current_bid %}
-    <strong>Bids: </strong>{{ listing.current_bid }}
+    {% if listing.highest_bid %}
+    <strong>Highest Bid: </strong>{{ listing.highest_bid }}
     {% else %}
     <strong>No bidders yet!</strong>
     {% endif %}
@@ -25,5 +31,6 @@
 
 <img src="{{ listing.img_url }}">
 <hr>
+{% endif %}
 {% endfor %}
 {% endblock %}

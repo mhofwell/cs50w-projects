@@ -5,7 +5,7 @@ from django.forms.widgets import NumberInput
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .models import Comment_form, New_bid, User, CreateNewListing, AuctionListing, Bid, Comment, Watchlist
+from .models import Comment_form, New_bid, User, CreateNewListing, AuctionListing, Bid, Comment, Watchlist, Categories
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
@@ -19,7 +19,28 @@ def index(request):
         'active_listings': AuctionListing.objects.all(),
         'users': User.objects.all(),
         'bid': Bid.objects.all(),
-        'comment': Comment.objects.all()
+        'comment': Comment.objects.all(),
+    })
+
+
+def filter(request, name):
+    print(name)
+    if AuctionListing.objects.filter(category=name).exists():
+        filtered_listings = AuctionListing.objects.filter(category=name)
+        print(type(filtered_listings))
+        return render(request, "auctions/categorypage.html", {
+            'listings': filtered_listings,
+            'category': name,
+        })
+    else:
+        messages.add_message(request, messages.ERROR,
+                             "No active items in that category!")
+        return HttpResponseRedirect(reverse("index"))
+
+
+def categories(request):
+    return render(request, "auctions/categories.html", {
+        'categories': Categories
     })
 
 
@@ -70,6 +91,7 @@ def watchlist(request):
         listings = watchlist_object.item.all()
         return render(request, "auctions/watchlist.html", {
             'watchlist': listings,
+            'user': user
         })
     else:
         messages.add_message(request, messages.ERROR,

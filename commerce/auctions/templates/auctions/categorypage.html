@@ -2,12 +2,12 @@
 
 {% block body %}
 <div class=active-header>
-    <h2>Active Listings</h2>
+    <h2>{{ category }}</h2>
 </div>
 <hr>
 
 <div class="listing-container">
-    {% for listing in active_listings %}
+    {% for listing in listings %}
     {% if listing.active %}
     <div class="listing">
         <form action="{% url 'index' %}" method=POST>
@@ -16,7 +16,7 @@
                 <h5>{{ listing.title }}</h5>
             </div>
             <div>
-                <img src="{{listing.img_url}}">
+                <img src="{{ listing.img_url }}">
             </div>
             <div class="listing-price">
                 <label><strong>Price: </strong> ${{listing.starting_bid}}</label>
@@ -33,7 +33,7 @@
             </div>
             <br>
             <input type="submit" class="btn btn-primary" value="View">
-            <input type="hidden" value="{{ listing.title }}" name="title">
+            <input type="hidden" value="{{listing.title}}" name="title">
         </form>
     </div>
     {% endif %}
