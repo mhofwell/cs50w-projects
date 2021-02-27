@@ -13,8 +13,8 @@ from django.contrib import messages
 
 def index(request):
     if request.method == "POST":
-        title = request.POST["title"]
-        return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
+        pk = request.POST["pk"]
+        return HttpResponseRedirect(reverse("getpage", kwargs={'pk': pk}))
     return render(request, "auctions/index.html", {
         'active_listings': AuctionListing.objects.all(),
         'users': User.objects.all(),
@@ -44,9 +44,9 @@ def categories(request):
     })
 
 
-def getpage(request, title):
+def getpage(request, pk):
     user = request.user.id
-    listing = AuctionListing.objects.get(title=f"{title}")
+    listing = AuctionListing.objects.get(pk=pk)
     creator = listing.user.id
     if listing.highest_bid_user:
         highest_bid = listing.highest_bid_user
@@ -125,7 +125,7 @@ def add_to_watchlist(request, listing_id):
     if Watchlist.objects.filter(user=request.user, item=listing_id).exists():
         messages.add_message(request, messages.ERROR,
                              "You already have it in your watchlist.")
-        return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
+        return HttpResponseRedirect(reverse("getpage", kwargs={'pk': listing_id}))
     # Get the user watchlist or create it if it doesn't exists
     user_list, create = Watchlist.objects.get_or_create(user=request.user)
     # Add the item through the ManyToManyField (Watchlist => item)
@@ -136,10 +136,10 @@ def add_to_watchlist(request, listing_id):
 
 
 @ login_required
-def bid(request, title):
+def bid(request, pk):
     if request.method == "POST":
         user = User.objects.get(pk=request.user.id)
-        listing = AuctionListing.objects.get(title=title)
+        listing = AuctionListing.objects.get(pk=pk)
         bid = New_bid(request.POST)
         if bid.is_valid():
             bid_obj = bid.save(commit=False)
@@ -158,15 +158,15 @@ def bid(request, title):
                 add_to_watchlist(request, listing_id)
                 messages.add_message(request, messages.SUCCESS,
                                      "Bid added!")
-                return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
+                return HttpResponseRedirect(reverse("getpage", kwargs={'pk': pk}))
             else:
                 messages.add_message(request, messages.ERROR,
                                      "You need to match or exceed the current price or highest bid.")
-                return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
+                return HttpResponseRedirect(reverse("getpage", kwargs={'pk': pk}))
         else:
             messages.add_message(request, messages.ERROR,
                                  "You need to match or exceed the current price or highest bid.")
-            return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
+            return HttpResponseRedirect(reverse("getpage", kwargs={'pk': pk}))
 
 
 @ login_required
@@ -174,16 +174,16 @@ def comment(request):
     user = User.objects.get(pk=request.user.id)
     if request.method == "POST":
         obj = Comment_form(request.POST)
-        title = request.POST['title']
+        pk = request.POST['pk']
         print(title)
         if obj.is_valid:
             comment_obj = obj.save(commit=False)
             print(comment_obj.user_comment)
-            listing = AuctionListing.objects.get(title=title)
+            listing = AuctionListing.objects.get(pk=pk)
             comment_obj.listing = listing
             comment_obj.user = user
             comment_obj.save()
-        return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
+        return HttpResponseRedirect(reverse("getpage", kwargs={'pk': pk}))
 
 
 @ login_required

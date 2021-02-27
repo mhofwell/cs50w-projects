@@ -16,7 +16,11 @@
                 <h5>{{ listing.title }}</h5>
             </div>
             <div>
+                {% if listing.img_url %}
                 <img src="{{listing.img_url}}">
+                {% else %}
+                <img src="/static/img/No_picture_available.png">
+                {% endif %}
             </div>
             <div class="listing-price">
                 <label><strong>Price: </strong> ${{listing.starting_bid}}</label>
@@ -33,7 +37,7 @@
             </div>
             <br>
             <input type="submit" class="btn btn-primary" value="View">
-            <input type="hidden" value="{{ listing.title }}" name="title">
+            <input type="hidden" value="{{ listing.pk }}" name="pk">
         </form>
     </div>
     {% endif %}

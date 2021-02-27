@@ -37,7 +37,7 @@ class AuctionListing(models.Model):
         blank=True, default=0, max_digits=15, decimal_places=2)
     highest_bid_user = models.ForeignKey(
         User, related_name='winner', blank=True, null=True, on_delete=CASCADE)
-    img_url = models.URLField()
+    img_url = models.URLField(blank=True, null=True)
     date_created = models.DateTimeField(
         auto_now_add=True)
     active = models.BooleanField(max_length=5, default="True")

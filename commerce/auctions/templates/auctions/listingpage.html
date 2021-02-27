@@ -9,7 +9,11 @@
 </div>
 <div class=listing-page-body>
     <div>
-        <img src="{{ listing.img_url }}">
+        {% if listing.img_url %}
+        <img src="{{listing.img_url}}">
+        {% else %}
+        <img src="/static/img/No_picture_available.png">
+        {% endif %}
     </div>
     <div class="listing-information">
         <div>
@@ -50,8 +54,7 @@
     </div>
 </div>
 {% if user.is_authenticated %}
-<form action="{% url 'bid' listing.title %}" method=POST>
-    <!-- The error I think is because you're passing in listing.title as part of the request, try and remove it -->
+<form action="{% url 'bid' listing.pk %}" method=POST>
     {%csrf_token%}
     <label><strong>Amount: </strong></label>
     <div class="listing-page-bid">
@@ -82,7 +85,7 @@
     <label class="form-label-image"><strong>Add A Comment!</strong></label>
     {{ comment_form.user_comment}}
     <input type="submit" value="Comment" name="comment" class="btn btn-primary">
-    <input type="hidden" value="{{ listing.title }}" name="title" class="btn btn-primary">
+    <input type="hidden" value="{{ listing.pk }}" name="pk" class="btn btn-primary">
 </form>
 
 
