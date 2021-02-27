@@ -15,9 +15,13 @@
         <div>
             <label class="form-label"><strong>Posted by: </strong>{{ listing.user }}</label>
         </div>
-        {% if current_user == creator %}
+        {% if current_user == creator and listing.active == True %}
         <div>
             <a href="{% url 'close' listing.title %}"><strong>Close</strong></a>
+        </div>
+        {% else %}
+        <div>
+            <strong>Listing closed.</strong>
         </div>
         {% endif %}
         <div>
