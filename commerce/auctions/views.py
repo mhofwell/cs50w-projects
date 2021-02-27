@@ -35,7 +35,7 @@ def filter(request, name):
     else:
         messages.add_message(request, messages.ERROR,
                              "No active items in that category!")
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("categories"))
 
 
 def categories(request):
@@ -48,29 +48,47 @@ def getpage(request, title):
     user = request.user.id
     listing = AuctionListing.objects.get(title=f"{title}")
     creator = listing.user.id
-    highest_bid = listing.highest_bid_user
-    print(highest_bid.pk)
-    print(user)
-    if Comment.objects.filter(listing=listing).exists():
-        comments = Comment.objects.filter(listing=listing)
-        return render(request, "auctions/listingpage.html", {
-            'listing': listing,
-            'new_bid': New_bid(),
-            'comment_form': Comment_form(),
-            'comments': comments,
-            'creator': creator,
-            'current_user': user,
-            'highest_bid_user_id': highest_bid.pk
-        })
+    if listing.highest_bid_user:
+        highest_bid = listing.highest_bid_user
+        if Comment.objects.filter(listing=listing).exists():
+            comments = Comment.objects.filter(listing=listing)
+            return render(request, "auctions/listingpage.html", {
+                'listing': listing,
+                'new_bid': New_bid(),
+                'comment_form': Comment_form(),
+                'comments': comments,
+                'creator': creator,
+                'current_user': user,
+                'highest_bid_user_id': highest_bid.pk
+            })
+        else:
+            return render(request, "auctions/listingpage.html", {
+                'listing': listing,
+                'new_bid': New_bid(),
+                'comment_form': Comment_form(),
+                'current_user': user,
+                'creator': creator,
+                'highest_bid_user_id': highest_bid.pk
+            })
     else:
-        return render(request, "auctions/listingpage.html", {
-            'listing': listing,
-            'new_bid': New_bid(),
-            'comment_form': Comment_form(),
-            'current_user': user,
-            'creator': creator,
-            'highest_bid_user_id': highest_bid.pk
-        })
+        if Comment.objects.filter(listing=listing).exists():
+            comments = Comment.objects.filter(listing=listing)
+            return render(request, "auctions/listingpage.html", {
+                'listing': listing,
+                'new_bid': New_bid(),
+                'comment_form': Comment_form(),
+                'comments': comments,
+                'creator': creator,
+                'current_user': user,
+            })
+        else:
+            return render(request, "auctions/listingpage.html", {
+                'listing': listing,
+                'new_bid': New_bid(),
+                'comment_form': Comment_form(),
+                'current_user': user,
+                'creator': creator,
+            })
 
 
 @ login_required
@@ -145,6 +163,10 @@ def bid(request, title):
                 messages.add_message(request, messages.ERROR,
                                      "You need to match or exceed the current price or highest bid.")
                 return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
+        else:
+            messages.add_message(request, messages.ERROR,
+                                 "You need to match or exceed the current price or highest bid.")
+            return HttpResponseRedirect(reverse("getpage", kwargs={'title': f"{title}"}))
 
 
 @ login_required
