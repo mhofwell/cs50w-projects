@@ -42,12 +42,26 @@
             {% endif %}
         </div>
         {% if user.is_authenticated %}
+        {% if is_on_list %}
+        <div>
+            <a href="{% url 'remove_from_watchlist' listing.id %}">Remove from watchlist.</a>
+        </div>
+        {% else %}
         <div>
             <a href="{% url 'add_to_watchlist' listing.id %}">Add to Watchlist</a>
         </div>
         {% endif %}
+        {% endif %}
     </div>
     <div class="listing-information">
+        <div>
+            {% if listing.category %}
+            <label class="form-label"><strong>Category: </strong><a href="/categories/{{listing.category}}">{{
+                    listing.category }}</a></label>
+            {% else %}
+            <label class=" form-label"><strong>Category: </strong>No category.</label>
+            {% endif %}
+        </div>
         <div>
             <label class="form-label"><strong>Description: </strong>{{ listing.description }}</label>
         </div>
@@ -85,6 +99,7 @@
     <label class="form-label-image"><strong>Add A Comment!</strong></label>
     {{ comment_form.user_comment}}
     <input type="submit" value="Comment" name="comment" class="btn btn-primary">
+    <br>
     <input type="hidden" value="{{ listing.pk }}" name="pk" class="btn btn-primary">
 </form>
 

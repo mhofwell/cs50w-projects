@@ -14,17 +14,23 @@ body {
 img {
     width: 200px;
     height: 150px;
-    object-fit: contain;
+    object-fit: cover;
   }
 
   .listing {
-      display: block; 
-      max-width: 250px;
+    text-align: center;  
+    min-width: 350px;
+    border-radius: 10px;
+    border: solid gray 0.25px;
+    padding: 15px; 
+    margin: 10px;
   }
 
   .listing-container{
-      display: flex; 
-      flex-wrap: wrap;
+    display: flex; 
+    flex-wrap: wrap;
+    padding: 20px;
+      
   }
 
   .listing-description {
@@ -40,7 +46,6 @@ img {
   }
 
   .listing-title {
-    display: flex; 
   }
 
   p {
@@ -63,4 +68,12 @@ img {
 .listing-page-bid {
   max-width: 300px;
   display: flex; 
+}
+
+.active-listings-form {
+
+}
+
+.img-container{
+  margin-top: 20px; 
 }

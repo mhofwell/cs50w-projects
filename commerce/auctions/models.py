@@ -30,7 +30,7 @@ class AuctionListing(models.Model):
     title = models.CharField(max_length=100, blank=True)
     description = models.TextField(max_length=500, blank=True)
     category = models.CharField(
-        max_length=150, blank=True, choices=Categories.choices)
+        max_length=150, blank=True, null=True, choices=Categories.choices)
     starting_bid = models.DecimalField(
         blank=True, max_digits=15, decimal_places=2, validators=[MinValueValidator(1)])
     highest_bid = models.DecimalField(
@@ -43,7 +43,9 @@ class AuctionListing(models.Model):
     active = models.BooleanField(max_length=5, default="True")
 
     def __str__(self):
-        return f"{self.user}: {self.title}"
+        date_created = self.date_created
+        formatted_time = date_created.strftime('%Y-%m-%d %H:%M:%S')
+        return f"{self.user}: {self.title} created on {formatted_time}"
 
 
 class Watchlist(models.Model):
@@ -59,7 +61,7 @@ class Comment(models.Model):
         User, on_delete=models.CASCADE, related_name='comments', default="None")
     listing = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE, related_name='comments')
-    user_comment = models.TextField(max_length=500, blank=True, default="None")
+    user_comment = models.TextField(max_length=500, blank=True)
 
     def __str__(self):
         return (f"{self.user_comment} by {self.user}")
@@ -112,7 +114,7 @@ class Comment_form(ModelForm):
         }
 
         widgets = {
-            'user_comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Great looking item...', 'cols': 10, 'rows': 3}),
+            'user_comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Great looking item...', 'cols': 10, 'rows': 3, "required": True}),
         }
 
 

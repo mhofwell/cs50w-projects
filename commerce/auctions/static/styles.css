@@ -14,17 +14,22 @@ body {
 img {
   width: 200px;
   height: 150px;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .listing {
-  display: block;
-  max-width: 250px;
+  text-align: center;
+  min-width: 350px;
+  border-radius: 10px;
+  border: solid gray 0.25px;
+  padding: 15px;
+  margin: 10px;
 }
 
 .listing-container {
   display: flex;
   flex-wrap: wrap;
+  padding: 20px;
 }
 
 .listing-description {
@@ -37,10 +42,6 @@ img {
 .listing-price {
   padding: 2px;
   align-items: center;
-}
-
-.listing-title {
-  display: flex;
 }
 
 p {
@@ -64,6 +65,10 @@ p {
 .listing-page-bid {
   max-width: 300px;
   display: flex;
+}
+
+.img-container {
+  margin-top: 20px;
 }
 
 /*# sourceMappingURL=styles.css.map */

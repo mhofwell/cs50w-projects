@@ -10,13 +10,19 @@
     {% for listing in listings %}
     {% if listing.active %}
     <div class="listing">
-        <form action="{% url 'index' %}" method=POST>
+        <form action="{% url 'index' %}" class="active-listings-form" method=POST>
             {% csrf_token %}
             <div class="listing-title">
                 <h5>{{ listing.title }}</h5>
             </div>
-            <div>
-                <img src="{{ listing.img_url }}">
+            <hr>
+            <div class="img-container">
+                {% if listing.img_url %}
+                <img src="{{listing.img_url}}">
+                {% else %}
+                <img src="/static/img/No_picture_available.png">
+                {% endif %}
+                <hr>
             </div>
             <div class="listing-price">
                 <label><strong>Price: </strong> ${{listing.starting_bid}}</label>

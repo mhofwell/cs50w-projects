@@ -48,6 +48,10 @@ def getpage(request, pk):
     user = request.user.id
     listing = AuctionListing.objects.get(pk=pk)
     creator = listing.user.id
+    if Watchlist.objects.filter(item=listing).exists():
+        is_on_list = True
+    else:
+        is_on_list = False
     if listing.highest_bid_user:
         highest_bid = listing.highest_bid_user
         if Comment.objects.filter(listing=listing).exists():
@@ -59,7 +63,8 @@ def getpage(request, pk):
                 'comments': comments,
                 'creator': creator,
                 'current_user': user,
-                'highest_bid_user_id': highest_bid.pk
+                'highest_bid_user_id': highest_bid.pk,
+                'is_on_list': is_on_list
             })
         else:
             return render(request, "auctions/listingpage.html", {
@@ -68,7 +73,8 @@ def getpage(request, pk):
                 'comment_form': Comment_form(),
                 'current_user': user,
                 'creator': creator,
-                'highest_bid_user_id': highest_bid.pk
+                'highest_bid_user_id': highest_bid.pk,
+                'is_on_list': is_on_list
             })
     else:
         if Comment.objects.filter(listing=listing).exists():
@@ -80,6 +86,7 @@ def getpage(request, pk):
                 'comments': comments,
                 'creator': creator,
                 'current_user': user,
+                'is_on_list': is_on_list
             })
         else:
             return render(request, "auctions/listingpage.html", {
@@ -88,6 +95,7 @@ def getpage(request, pk):
                 'comment_form': Comment_form(),
                 'current_user': user,
                 'creator': creator,
+                'is_on_list': is_on_list
             })
 
 
@@ -120,7 +128,6 @@ def watchlist(request):
 @ login_required
 def add_to_watchlist(request, listing_id):
     listing_to_save = get_object_or_404(AuctionListing, pk=listing_id)
-    title = listing_to_save.title
     # Check if the item already exists in that user watchlist
     if Watchlist.objects.filter(user=request.user, item=listing_id).exists():
         messages.add_message(request, messages.ERROR,
@@ -132,7 +139,22 @@ def add_to_watchlist(request, listing_id):
     user_list.item.add(listing_to_save)
     messages.add_message(request, messages.SUCCESS,
                          "Successfully added to your watchlist")
-    return HttpResponseRedirect(reverse("watchlist"))
+    return HttpResponseRedirect(reverse("getpage", kwargs={'pk': listing_id}))
+
+
+@ login_required
+def remove_from_watchlist(request, listing_id):
+    listing_to_remove = get_object_or_404(AuctionListing, pk=listing_id)
+    # Check if the item already exists in that user watchlist
+    if Watchlist.objects.filter(user=request.user, item=listing_id).exists():
+        Watchlist.objects.get(user=request.user, item=listing_id).delete()
+        messages.add_message(request, messages.SUCCESS,
+                             "Removed from watchlist.")
+        return HttpResponseRedirect(reverse("getpage", kwargs={'pk': listing_id}))
+    # Get the user watchlist or create it if it doesn't exists
+    messages.add_message(request, messages.ERROR,
+                         "You don't have this on your watchlist.")
+    return HttpResponseRedirect(reverse("getpage", kwargs={'pk': listing_id}))
 
 
 @ login_required
@@ -175,7 +197,6 @@ def comment(request):
     if request.method == "POST":
         obj = Comment_form(request.POST)
         pk = request.POST['pk']
-        print(title)
         if obj.is_valid:
             comment_obj = obj.save(commit=False)
             print(comment_obj.user_comment)
