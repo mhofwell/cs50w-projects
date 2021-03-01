@@ -20,7 +20,7 @@
 </div>
 <div>
     {% if listing.highest_bid %}
-    <strong>Highest Bid: </strong>{{ listing.highest_bid }}
+    <strong>Highest Bid: </strong>{{ listing.highest_bid }} by {{ listing.highest_bid_user}}
     {% else %}
     <strong>No bidders yet!</strong>
     {% endif %}

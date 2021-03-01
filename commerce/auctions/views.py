@@ -14,6 +14,7 @@ from django.contrib import messages
 def index(request):
     if request.method == "POST":
         pk = request.POST["pk"]
+        print(pk)
         return HttpResponseRedirect(reverse("getpage", kwargs={'pk': pk}))
     return render(request, "auctions/index.html", {
         'active_listings': AuctionListing.objects.all(),
@@ -48,6 +49,8 @@ def getpage(request, pk):
     user = request.user.id
     listing = AuctionListing.objects.get(pk=pk)
     creator = listing.user.id
+    cat = listing.category
+    print(cat)
     if Watchlist.objects.filter(item=listing).exists():
         is_on_list = True
     else:
@@ -64,7 +67,8 @@ def getpage(request, pk):
                 'creator': creator,
                 'current_user': user,
                 'highest_bid_user_id': highest_bid.pk,
-                'is_on_list': is_on_list
+                'is_on_list': is_on_list,
+                'category': cat
             })
         else:
             return render(request, "auctions/listingpage.html", {
@@ -74,7 +78,8 @@ def getpage(request, pk):
                 'current_user': user,
                 'creator': creator,
                 'highest_bid_user_id': highest_bid.pk,
-                'is_on_list': is_on_list
+                'is_on_list': is_on_list,
+                'category': cat
             })
     else:
         if Comment.objects.filter(listing=listing).exists():
@@ -86,7 +91,8 @@ def getpage(request, pk):
                 'comments': comments,
                 'creator': creator,
                 'current_user': user,
-                'is_on_list': is_on_list
+                'is_on_list': is_on_list,
+                'category': cat
             })
         else:
             return render(request, "auctions/listingpage.html", {
@@ -95,7 +101,8 @@ def getpage(request, pk):
                 'comment_form': Comment_form(),
                 'current_user': user,
                 'creator': creator,
-                'is_on_list': is_on_list
+                'is_on_list': is_on_list,
+                'category': cat
             })
 
 
@@ -177,17 +184,22 @@ def bid(request, pk):
                 listing.highest_bid_user = user
                 listing.save()
                 listing_id = listing.id
-                add_to_watchlist(request, listing_id)
-                messages.add_message(request, messages.SUCCESS,
-                                     "Bid added!")
-                return HttpResponseRedirect(reverse("getpage", kwargs={'pk': pk}))
+                if Watchlist.objects.filter(user=user, item=listing):
+                    messages.add_message(request, messages.SUCCESS,
+                                         "Bid added!")
+                    return HttpResponseRedirect(reverse("getpage", kwargs={'pk': pk}))
+                else:
+                    add_to_watchlist(request, listing_id)
+                    messages.add_message(request, messages.SUCCESS,
+                                         "Bid added!")
+                    return HttpResponseRedirect(reverse("getpage", kwargs={'pk': pk}))
             else:
                 messages.add_message(request, messages.ERROR,
                                      "You need to match or exceed the current price or highest bid.")
                 return HttpResponseRedirect(reverse("getpage", kwargs={'pk': pk}))
         else:
             messages.add_message(request, messages.ERROR,
-                                 "You need to match or exceed the current price or highest bid.")
+                                 "Something went wrong!")
             return HttpResponseRedirect(reverse("getpage", kwargs={'pk': pk}))
 
 

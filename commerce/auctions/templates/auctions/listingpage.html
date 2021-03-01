@@ -56,10 +56,9 @@
     <div class="listing-information">
         <div>
             {% if listing.category %}
-            <label class="form-label"><strong>Category: </strong><a href="/categories/{{listing.category}}">{{
-                    listing.category }}</a></label>
+            <strong>Category: </strong><a href="/categories/{{listing.category}}">{{ category }}</a>
             {% else %}
-            <label class=" form-label"><strong>Category: </strong>No category.</label>
+            <strong>Category: </strong>No category.
             {% endif %}
         </div>
         <div>
