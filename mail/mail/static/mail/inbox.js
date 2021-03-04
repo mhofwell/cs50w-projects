@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('#compose').addEventListener('click', compose_email);
         document.querySelector('#compose-form').onclick = send;
 
+        // default load inbox
         load_mailbox('inbox');
 });
 
