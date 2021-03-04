@@ -4,9 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
         document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
         document.querySelector('#compose').addEventListener('click', compose_email);
-        document.querySelector('#compose-form').onsubmit = send;
+        document.querySelector('#compose-form').onclick = send;
 
-        // default load inbox
         load_mailbox('inbox');
 });
 
@@ -28,21 +27,41 @@ function load_mailbox(mailbox) {
 
         // Show the mailbox name
         document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() +
-                mailbox.slice(1)}</h3>`;
+                mailbox.slice(1)}</h3><hr>`;
 
         fetch(`/emails/${mailbox}`)
                 .then(response => response.json())
-                .then(data => data.forEach(email => addEmail(email)));
+                .then(data =>
+                        data.forEach(email => {
+                                JSON.stringify(email);
+                                addEmail(email);
+                        })
+                );
 }
 
 function addEmail(email) {
         // create new email
         const element = document.createElement('div');
         element.className = 'email';
-        const mail = JSON.stringify(email);
-        element.innerHTML = mail;
 
-        document.querySelector('#emails-view').append(mail);
+        // add content to email div
+        element.innerHTML = ` 
+        <div>
+                To: ${email.recipients}
+        </div>
+        <div>
+                From: ${email.sender}
+        </div>
+        <div>
+                Subject: ${email.subject}
+        </div>
+        <div>
+                Content: ${email.body}
+        </div>
+        <hr>
+        `;
+
+        document.querySelector('#emails-view').append(element);
 }
 
 function send() {
@@ -57,6 +76,5 @@ function send() {
                 .then(response => response.json())
                 .then(result => {
                         console.log(result);
-                        load_mailbox('sent');
                 });
 }
