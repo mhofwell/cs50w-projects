@@ -1,14 +1,48 @@
+// When the page loads, load its default state
 document.addEventListener('DOMContentLoaded', function() {
-        // Use buttons to toggle between views
-        document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
-        document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
-        document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-        document.querySelector('#compose').addEventListener('click', compose_email);
-        document.querySelector('#compose-form').onclick = send;
+        document.querySelectorAll('.btn-outline-primary').forEach(button => {
+                button.onclick = function() {
+                        const mailbox = this.id;
 
-        // default load inbox
+                        // Add the current state to the history
+                        history.pushState({ mailbox }, '', `/emails/${mailbox}`);
+                        if (mailbox !== 'compose') {
+                                load_mailbox(mailbox);
+                        } else {
+                                compose_email();
+                        }
+                };
+        });
+
+        document.querySelector('#compose-form').onsubmit = send;
+
+        // Check to see if all the fields are filled before allowing a message to send.
+        document.querySelector('#submit').disabled = true;
+
+        const to = document.querySelector('#compose-recipients');
+        const subject = document.querySelector('#compose-subject');
+        const body = document.querySelector('#compose-body');
+
+        document.addEventListener('keyup', () => {
+                if (to.value.length > 0 && subject.value.length > 0 && body.value.length > 0) {
+                        document.querySelector('#submit').disabled = false;
+                } else {
+                        document.querySelector('#submit').disabled = true;
+                }
+        });
+
+        // By default, load the inbox
         load_mailbox('inbox');
 });
+
+window.onpopstate = function(event) {
+        console.log(event.state.mailbox);
+        if (event.state.mailbox !== 'compose') {
+                load_mailbox(event.state.mailbox);
+        } else {
+                compose_email();
+        }
+};
 
 function compose_email() {
         // Show compose view and hide other views
@@ -35,32 +69,52 @@ function load_mailbox(mailbox) {
                 .then(data =>
                         data.forEach(email => {
                                 JSON.stringify(email);
-                                addEmail(email);
+                                addEmail(email, mailbox);
                         })
                 );
 }
 
-function addEmail(email) {
+function addEmail(email, mailbox) {
         // create new email
         const element = document.createElement('div');
         element.className = 'email';
-
+        console.log(email.read);
         // add content to email div
-        element.innerHTML = ` 
-        <div>
-                To: ${email.recipients}
-        </div>
-        <div>
-                From: ${email.sender}
-        </div>
-        <div>
-                Subject: ${email.subject}
-        </div>
-        <div>
-                Content: ${email.body}
-        </div>
-        <hr>
-        `;
+        if (mailbox === 'sent') {
+                element.innerHTML = `
+          <div class=email-heading-container>
+                <div class=email-line><strong> ${email.recipients}</strong></div>
+                <div class=email-line><strong></strong>${email.subject}</div> 
+          </div>
+          <div class=email-heading-container-date>      
+                <div class=email-date><strong></strong>${email.timestamp}</div>
+          </div>
+          `;
+        } else if (mailbox === 'inbox') {
+                element.innerHTML = `
+          <div class=email-heading-container>
+                <div class=email-line><strong>${email.sender}</strong></div>
+                <div class=email-line><strong></strong>${email.subject}</div> 
+          </div>
+          <div class=email-heading-container-date>      
+                <div class=email-date><strong></strong>${email.timestamp}</div>
+          </div>
+          `;
+        } else if (email.archived === true) {
+                element.innerHTML = `
+          <div class=email-heading-container>
+                <div class=email-line><strong>${email.sender}</strong></div>
+                <div class=email-line><strong></strong>${email.subject}</div> 
+          </div>
+          <div class=email-heading-container-date>      
+                <div class=email-date><strong></strong>${email.timestamp}</div>
+          </div>`;
+        }
+
+        if (email.read === true) {
+                console.log(email.read);
+                element.classList.add('read');
+        }
 
         document.querySelector('#emails-view').append(element);
 }
@@ -77,5 +131,6 @@ function send() {
                 .then(response => response.json())
                 .then(result => {
                         console.log(result);
+                        load_mailbox('inbox');
                 });
 }
