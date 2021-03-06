@@ -1,10 +1,14 @@
-.email {
+.email-container-singleview, .email {
   border: solid;
   border-color: black;
   border-width: 1px;
   margin: 10px;
   padding: 10px;
+}
+
+.email {
   display: flex;
+  cursor: pointer;
 }
 
 .email-line {
@@ -31,6 +35,24 @@
 
 .btn, .btn-primary {
   margin-top: 10px;
+}
+
+.button-row {
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+}
+
+.email-button {
+  width: 50%;
+}
+
+.email-button-reply {
+  width: 50%;
+  text-align: right;
 }
 
 /*# sourceMappingURL=styles.css.map */
