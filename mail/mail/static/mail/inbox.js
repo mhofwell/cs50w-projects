@@ -28,29 +28,41 @@ document.addEventListener('DOMContentLoaded', function() {
         load_mailbox('inbox');
 });
 
-function openEmail(id) {
+async function openEmail(id) {
+        document.querySelector('#email-single-view').innerHTML = '';
         // Show single email view and hide other views
         document.querySelector('#emails-view').style.display = 'none';
         document.querySelector('#compose-view').style.display = 'none';
         const emailSingleView = document.querySelector('#email-single-view');
         emailSingleView.style.display = 'block';
 
-        fetch(`/emails/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                        JSON.stringify(data);
-                        getSingleEmail(data);
-                });
+        // fetch the data from the email and mark it read.
+        readEmail(id);
+}
+
+function readEmail(id) {
+        // change property of email's read to true
+        fetch(`/emails/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                        read: true,
+                }),
+        }).then(() => {
+                // fetch the data from the database to display
+                fetch(`/emails/${id}`)
+                        .then(response => response.json())
+                        .then(data => {
+                                JSON.stringify(data);
+                                getSingleEmail(data);
+                        });
+        });
 }
 
 function getSingleEmail(data) {
-        // reset innerHTML of div so emails don't stack
-        document.querySelector('#email-single-view').innerHTML = '';
-
         // fetch the required email data and create an element for it
         const element = document.createElement('div');
+        element.className = 'email-container-singleview';
         element.innerHTML = `
-                <div class='email-container-singleview'>
                         <div class='email-line'>
                         <strong>${data.timestamp}</strong>
                         </div>
@@ -78,11 +90,14 @@ function getSingleEmail(data) {
                                         <input class="btn btn-primary" type="submit" value="Reply"> 
                                 </div>
                                 <div class='email-button-reply'>
-                                        <input class="btn btn-primary" type="submit" value="Archive">    
+                                        <input class="btn btn-primary btn-archive" type="submit" value="Archive">    
                                 </div>         
                         </div>
-                </div>
                 `;
+
+        if (data.read === true) {
+                element.classList.add('read');
+        }
 
         document.querySelector('#email-single-view').append(element);
 }
@@ -179,4 +194,5 @@ function send() {
                         console.log(result);
                 });
         load_mailbox('sent');
+        return false;
 }
