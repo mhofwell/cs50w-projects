@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         load_mailbox('inbox');
 });
 
-async function openEmail(id) {
+function openEmail(id, mailbox) {
         document.querySelector('#email-single-view').innerHTML = '';
         // Show single email view and hide other views
         document.querySelector('#emails-view').style.display = 'none';
@@ -37,10 +37,10 @@ async function openEmail(id) {
         emailSingleView.style.display = 'block';
 
         // fetch the data from the email and mark it read.
-        readEmail(id);
+        readEmail(id, mailbox);
 }
 
-function readEmail(id) {
+function readEmail(id, mailbox) {
         // change property of email's read to true
         fetch(`/emails/${id}`, {
                 method: 'PUT',
@@ -53,12 +53,12 @@ function readEmail(id) {
                         .then(response => response.json())
                         .then(data => {
                                 JSON.stringify(data);
-                                getSingleEmail(data);
+                                getSingleEmail(data, mailbox);
                         });
         });
 }
 
-function getSingleEmail(data) {
+function getSingleEmail(data, mailbox) {
         // fetch the required email data and create an element for it
         const element = document.createElement('div');
         element.className = 'email-container-singleview';
@@ -87,10 +87,10 @@ function getSingleEmail(data) {
                         
                         <div class='button-row'>
                                 <div class='email-button'>
-                                        <input class="btn btn-primary" type="submit" value="Reply"> 
+                                        <input class="btn btn-primary" id="reply" type="submit" value="Reply"> 
                                 </div>
                                 <div class='email-button-reply'>
-                                        <input class="btn btn-primary btn-archive" type="submit" value="Archive">    
+                                        <input class="btn btn-primary btn-archive" id="archive-button" type="submit" value="Archive">    
                                 </div>         
                         </div>
                 `;
@@ -100,6 +100,71 @@ function getSingleEmail(data) {
         }
 
         document.querySelector('#email-single-view').append(element);
+
+        const archiveButton = document.querySelector('#archive-button');
+
+        if (mailbox === 'sent') {
+                archiveButton.style.display = 'none';
+        } else if (mailbox === 'archive') {
+                archiveButton.value = 'Unarchive';
+        }
+
+        document.querySelector('#archive-button').addEventListener('click', () => {
+                if (archiveButton.value === 'Archive') {
+                        archiveEmail(data.id);
+                } else if (archiveButton.value === 'Unarchive') {
+                        unArchiveEmail(data.id);
+                }
+        });
+
+        document.querySelector('#reply').addEventListener('click', () => {
+                replyToEmail(data);
+        });
+}
+
+function replyToEmail(data) {
+        // Show compose view and hide other views
+        document.querySelector('#emails-view').style.display = 'none';
+        document.querySelector('.email-container-singleview').style.display = 'none';
+        document.querySelector('#compose-view').style.display = 'block';
+
+        // check to see if "Re:" is in the subject line
+        const re = data.subject;
+        if (re.substr(0, 2) !== 'Re:') {
+                document.querySelector('#compose-subject').value = `Re: ${data.subject}`;
+        } else {
+                document.querySelector('#compose-subject').value = data.subject;
+        }
+
+        // Populate remaining composition fields
+        document.querySelector('#compose-recipients').value = data.sender;
+        document.querySelector('#compose-body').value = ` 
+        REPLY ABOVE THIS LINE: On ${data.timestamp}, ${data.sender} wrote: 
+        ${data.body}`;
+}
+
+function archiveEmail(id) {
+        // change property of email's archive attribute to true
+        fetch(`/emails/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                        archived: true,
+                }),
+        })
+                .then(alert('Email archived!'))
+                .then(load_mailbox('inbox'));
+}
+
+function unArchiveEmail(id) {
+        // change property of email's archive attribute to false
+        fetch(`/emails/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                        archived: false,
+                }),
+        })
+                .then(alert('Email un-archived!'))
+                .then(load_mailbox('inbox'));
 }
 
 function compose_email() {
@@ -170,7 +235,7 @@ function addEmail(email, mailbox) {
         }
 
         element.addEventListener('click', () => {
-                openEmail(email.id);
+                openEmail(email.id, mailbox);
         });
 
         if (email.read === true) {
@@ -192,7 +257,6 @@ function send() {
                 .then(response => response.json())
                 .then(result => {
                         console.log(result);
-                });
-        load_mailbox('sent');
-        return false;
+                })
+                .then(load_mailbox('sent'));
 }
