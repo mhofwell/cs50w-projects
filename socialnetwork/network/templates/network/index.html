@@ -1,0 +1,16 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<div class="post-form">
+    <form action="{% url 'index' %}" method=POST>
+        <h2>New Post</h2>
+        <div>
+            <label class="form-label">New Post</label>
+            {{ form.body }}
+        </div>
+    </form>
+</div>
+
+
+
+{% endblock %}
