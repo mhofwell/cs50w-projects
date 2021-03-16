@@ -1,16 +1,23 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
+<div id="title">
+</div>
+{% if user.is_authenticated %}
 <div class="post-form">
-    <form action="{% url 'index' %}" method=POST>
-        <h2>New Post</h2>
+    <form>
         <div>
             <label class="form-label">New Post</label>
             {{ form.body }}
         </div>
+        <div>
+            <input type="submit" value="Post" class="btn btn-primary" id="post-button">
+        </div>
     </form>
 </div>
+{% endif %}
 
-
+<div id="#newsfeed"></div>
 
 {% endblock %}

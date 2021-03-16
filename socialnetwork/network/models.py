@@ -28,16 +28,16 @@ class Post(models.Model):
         return f"{self.user} on {self.timestamp}"
 
 
-class User_Followers(models.Model):
-    user = user = models.ForeignKey("User", related_name='user',
-                                    on_delete=models.CASCADE)
+class UserFollowers(models.Model):
+    user = models.ForeignKey("User", related_name='user',
+                             on_delete=models.CASCADE)
     followers = models.ManyToManyField("User", related_name='followers')
 
     def __str__(self):
-        return f"{self.user}'s followers."
+        return f"{self.followers}"
 
 
-class post_form(ModelForm):
+class PostForm(ModelForm):
     class Meta:
         model = Post
         fields = ['body']
@@ -45,5 +45,5 @@ class post_form(ModelForm):
             'body': 'body',
         }
         widgets = {
-            'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write something new!'}),
+            'body': forms.Textarea(attrs={'class': 'form-control', 'id': 'post-body', 'placeholder': 'Write something new!'}),
         }

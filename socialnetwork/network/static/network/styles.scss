@@ -2,11 +2,12 @@
     resize: none; 
 }
 
-ul {
-    font-size: 14px; 
+body {
+    height: 100vh; 
 }
 
-body {
-    padding: 10px;
-    height: 100vh; 
+.post-form {
+    border: 1px solid #ccc!important;
+    margin: 10px; 
+    padding: 10px; 
 }
