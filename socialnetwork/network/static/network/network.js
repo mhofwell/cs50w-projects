@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
-        document.querySelector('#following').addEventListener('click', () => loadPosts('following'));
+        document.querySelector('#following').addEventListener('click', () => loadFeed('following'));
 
         const postButton = document.querySelector('#post-button');
         postButton.disabled = true;
         postButton.onsubmit = post;
-        const body = document.querySelector('#post-body');
 
+        const body = document.querySelector('#post-body');
         document.addEventListener('keyup', () => {
                 if (body.value.length === 0) {
                         postButton.disabled = true;
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
         });
 
-        loadPosts('all');
+        loadFeed('all');
 });
 
 function post() {
@@ -28,10 +28,10 @@ function post() {
                 .then(result => {
                         console.log(result);
                 })
-                .then(loadPosts('all'));
+                .then(loadFeed('all'));
 }
 
-function loadPosts(group) {
+function loadFeed(group) {
         // Show the group name
         if (group === 'all') {
                 document.querySelector('#title').innerHTML = `<h3>${group.charAt(0).toUpperCase() +
@@ -47,7 +47,48 @@ function loadPosts(group) {
                         data.forEach(userpost => {
                                 JSON.stringify(userpost);
                                 // add post
-                                // addEmail(email, mailbox);
+                                addPost(userpost, group);
                         })
                 );
+}
+
+function addPost(userpost) {
+        // create an element for the post
+        const element = document.createElement('div');
+        element.className = 'post';
+
+        // format the element with the appropriate data
+        element.innerHTML = `
+        <div class="post-wrapper">
+                <div class="post-user">
+                        ${userpost.user}
+                </div>        
+                <div class="post-body">
+                        ${userpost.timestamp}
+                </div>
+                <div class="post-body">
+                        ${userpost.body}
+                </div>
+                <div class="post-body">
+                        ${userpost.likes}
+                </div>
+                <button type="button" onclick="like()" value="Like" id="like">
+        </div>
+        `;
+
+        document.querySelector('#newsfeed').append(element);
+
+        // append the element to some parent node on the page.
+}
+
+function like() {
+        // create the route to add +1 to the like counter
+        console.log('you liked this post!');
+        return true;
+}
+
+function updateLikeCounter() {
+        // fetch the new counter number and update the element.
+        console.log('You updated the like counter!');
+        return true;
 }

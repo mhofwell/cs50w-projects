@@ -35,26 +35,35 @@ def post(request):
 
 
 def loadPosts(request, group):
-    pass
+    # get all posts
+    if group == "all":
+        posts = Post.objects.all()
+        return JsonResponse([post.serialize() for post in posts], safe=False)
 
-    # Filter posts returned based on mailbox
+    # get followers posts only
+    elif group == "following":
+        followers = UserFollowers.objects.filter(
+            user=request.user
+        )
 
-# if group == "all":
-#     posts = Post.objects.all()
-# elif group == "following":
-#     followers = UserFollowers.objects.filter(
-#         user=request.user
-#     )
-# posts_from_followers = []
-# for follower in followers:
-#     followers.followers.
+        # create empty list for follower objects
+        posts_from_followers = []
+        user = UserFollowers.objects.get(user=request.user.id)
 
-# else:
-#     return JsonResponse({"error": "Invalid mailbox."}, status=400)
+        # get all of a users followers
+        followers = user.followers.all()
 
-# # Return posts in reverse chronologial order
-# posts = posts.order_by("-timestamp").all()
-# return JsonResponse([posts.serialize() for post in posts], safe=False)
+        # for each follower, get their posts and add it to a list
+        for follower in followers:
+            posts = Post.objects.get(user=follower)
+            posts_from_followers.append(posts)
+
+        # Return posts in reverse chronologial order
+        posts_from_followers.order_by("-timestamp").all()
+        return JsonResponse([post.serialize() for post in posts_from_followers], safe=False)
+
+    else:
+        return JsonResponse({"error": "Invalid request for newsfeed posts."}, status=400)
 
 
 def login_view(request):
