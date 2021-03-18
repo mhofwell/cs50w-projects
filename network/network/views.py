@@ -8,6 +8,7 @@ from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from .models import Post, User, PostForm, UserFollowers
+from django.core import serializers
 
 
 def index(request):
@@ -63,6 +64,7 @@ def load_posts(request, group):
 
     # Return posts in reverse chronologial order
     posts.order_by("-timestamp").all()
+    # s_posts = serializers.serialize("json", posts)
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
 
