@@ -37,13 +37,34 @@ def post(request):
     return JsonResponse({"message": "Posted successfully."}, status=201)
 
 
+@login_required
+def get_profile(request, username):
+    # get specific user and followers
+    user = User.objects.get(username=username)
+    if UserFollowers.objects.filter(user=user).exists():
+        followers = user_followers_obj.followers
+    else:
+        followers = []
+    # get posts and order in reverse chronological order
+    if Post.objects.filter(user=user).exists():
+        posts = Post.objects.filter(user=user)
+        posts = posts.order_by('-timestamp').all()
+    else:
+        posts = []
+    return render(request, "network/profile.html", {
+        'followers': followers,
+        'user': user,
+        'posts': posts
+    })
+
+
 def load_posts(request, group):
     # get all posts
     if group == "all":
         posts = Post.objects.all()
         print(posts)
         if posts == None:
-            return HttpResponse({"error": "No posts to show!"}, status=400)
+            return JsonResponse({"error": "No posts to show!"}, status=400)
 
     # get followers posts only
     elif group == "following":
@@ -63,7 +84,8 @@ def load_posts(request, group):
         return JsonResponse({"error": "Invalid request for newsfeed posts."}, status=400)
 
     # Return posts in reverse chronologial order
-    posts.order_by("-timestamp").all()
+    posts = posts.order_by("-timestamp").all()
+    print(type(posts))
     # s_posts = serializers.serialize("json", posts)
     return JsonResponse([post.serialize() for post in posts], safe=False)
 

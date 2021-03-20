@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block body %}
-<div id="title">
+<div id="profile-title">
+    {{user.username}}
 </div>
 {% if user.is_authenticated %}
 <div class="post-wrapper">

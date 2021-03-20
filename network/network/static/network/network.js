@@ -28,8 +28,7 @@ function post() {
                 .then(response => response.json())
                 .then(result => {
                         console.log(result);
-                })
-                .then(loadFeed('all'));
+                });
 }
 
 function loadFeed(group) {
@@ -48,39 +47,39 @@ function loadFeed(group) {
                         data.forEach(userpost => {
                                 JSON.stringify(userpost);
                                 // add post
-                                console.log('LoadFeed Worked');
-                                // addPost(userpost, group);
+                                addPost(userpost);
                         })
                 );
 }
 
-// function addPost(userpost) {
-//         // create an element for the post
-//         const element = document.createElement('div');
-//         element.className = 'post';
+function addPost(userpost) {
+        // create an element for the post
+        console.log(userpost.id);
+        const element = document.createElement('div');
+        element.className = 'post';
 
-//         // format the element with the appropriate data
-//         element.innerHTML = `
-//         <div class="post-wrapper">
-//                 <div class="post-user">
-//                         ${userpost.user}
-//                 </div>
-//                 <div class="post-body">
-//                         ${userpost.timestamp}
-//                 </div>
-//                 <div class="post-body">
-//                         ${userpost.body}
-//                 </div>
-//                 <div class="post-body">
-//                         ${userpost.likes}
-//                 </div>
-//                 <button type="button" onclick="like()" value="Like" id="like">
-//         </div>
-//         `;
-
-//         // append the element to some parent node on the page.
-//         document.querySelector('#newsfeed').append(element);
-// }
+        // format the element with the appropriate data
+        element.innerHTML = `
+        <div class="post-wrapper">
+                <div class="post-user">
+                        <a href="/profile/${userpost.posted_by}">${userpost.posted_by}</a>
+                </div>
+                <div class="post-body">
+                        ${userpost.timestamp}
+                </div>
+                <div class="post-body">
+                        ${userpost.body}
+                </div>
+                <div class="post-body">
+                        ${userpost.likes}
+                </div>
+                <button type="button" onclick="like()" value="Like" class='btn btn-primary' id="like">Like</button>
+        </div>
+        `;
+        console.log(element);
+        // append the element to some parent node on the page.
+        document.querySelector('#newsfeed').append(element);
+}
 
 // function like() {
 //         // create the route to add +1 to the like counter
