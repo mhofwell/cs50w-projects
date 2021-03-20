@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         postButton.disabled = false;
                 }
         });
-
         loadFeed('all');
 });
 
@@ -36,12 +35,11 @@ function loadFeed(group) {
         if (group === 'all') {
                 document.querySelector('#title').innerHTML = `<h3>${group.charAt(0).toUpperCase() +
                         group.slice(1)} Posts</h3><hr>`;
-        } else {
+        } else if (group === 'following') {
                 document.querySelector('#title').innerHTML = `<h3>${group.charAt(0).toUpperCase() +
                         group.slice(1)}</h3><hr>`;
         }
-
-        fetch(`/post/${group}`)
+        fetch(`/posts/${group}`)
                 .then(response => response.json())
                 .then(data =>
                         data.forEach(userpost => {

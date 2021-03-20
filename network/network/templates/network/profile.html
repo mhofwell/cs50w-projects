@@ -3,22 +3,20 @@
 
 {% block body %}
 <div id="profile-title">
-    {{user.username}}
+    {{username}}
 </div>
-{% if user.is_authenticated %}
-<div class="post-wrapper">
-    <form id="post-form">
-        <div>
-            <label class="form-label">New Post</label>
-            {{ form.body }}
-        </div>
-        <div>
-            <input type="submit" value="Post" class="btn btn-primary" id="post-button">
-        </div>
-    </form>
+<div id="follower-count">
+    Following: {{ following }}
 </div>
-{% endif %}
-
-<div id="newsfeed"></div>
+<div id="follower-count">
+    Followers: {{ follower_count }}
+</div>
+<div id="userposts">
+    {% for post in posts %}
+    <div class='user-post'>
+        {{post}}
+    </div>
+    {% endfor %}
+</div>
 
 {% endblock %}

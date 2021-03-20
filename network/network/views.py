@@ -39,21 +39,30 @@ def post(request):
 
 @login_required
 def get_profile(request, username):
+
+    posts = []
+    follower_obj = []
+    follower_count = 0
+
     # get specific user and followers
     user = User.objects.get(username=username)
+    username = user.username
+    following = user.following
     if UserFollowers.objects.filter(user=user).exists():
-        followers = user_followers_obj.followers
-    else:
-        followers = []
+        obj = UserFollowers.objects.filter(user=user)
+        follower_obj = obj.followers
+        follower_count = len(follower_obj)
+
     # get posts and order in reverse chronological order
     if Post.objects.filter(user=user).exists():
         posts = Post.objects.filter(user=user)
         posts = posts.order_by('-timestamp').all()
-    else:
-        posts = []
+
     return render(request, "network/profile.html", {
-        'followers': followers,
-        'user': user,
+        'followers': follower_obj,
+        'follower_count': follower_count,
+        'following': following,
+        'username': username,
         'posts': posts
     })
 
@@ -68,17 +77,19 @@ def load_posts(request, group):
 
     # get followers posts only
     elif group == "following":
-        user = UserFollowers.objects.filter(
-            user=request.user.id
-        )
+        followers = []
+        if UserFollowers.objects.filter(user=request.user.id).exists():
+            user = UserFollowers.objects.filter(
+                user=request.user.id
+            )
 
-        # get all of a users followers
-        followers = user.followers.all()
+            # get all of a users followers
+            followers = user.followers.all()
 
-        # for each follower, get their posts and add it to a list
-        for follower in followers:
-            posts = []
-            posts.append(Post.objects.get(user=follower))
+            # for each follower, get their posts and add it to a list
+            for follower in followers:
+                posts = []
+                posts.append(Post.objects.get(user=follower))
 
     else:
         return JsonResponse({"error": "Invalid request for newsfeed posts."}, status=400)

@@ -2,10 +2,13 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.forms import ModelForm
 from django import forms
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class User(AbstractUser):
     pass
+    following = models.IntegerField(
+        default=0, validators=[MinValueValidator(0)])
 
 
 class Post(models.Model):
