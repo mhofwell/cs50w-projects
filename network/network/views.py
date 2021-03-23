@@ -20,6 +20,38 @@ def index(request):
 
 @login_required
 @csrf_exempt
+def follow(request, username):
+    # Query for requested User, User_to_follow and UserFollower list
+    user = request.user
+    print(user)
+    user_to_follow = User.objects.get(username=username)
+    try:
+        follower_list = UserFollowers.objects.get_or_create(user=request.user)
+    except UserFollowers.DoesNotExist:
+        return JsonResponse({"error": "Follower list not found."}, status=404)
+
+    # handle PUT request
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        if data.get("follow") is not None:
+            count = user.following
+            user.following = (count + 1)
+            user.save()
+            print("added +1")
+            follower_list.append(user_to_follow)
+            print("appended")
+            follower_list.save()
+        return JsonResponse({"success": "Follower list updated."}, tatus=204)
+
+    # Follow must be via PUT
+    else:
+        return JsonResponse({
+            "error": "PUT request required."
+        }, status=400)
+
+
+@ login_required
+@ csrf_exempt
 def post(request):
     user = User.objects.get(pk=request.user.id)
     if request.method != "POST":
@@ -37,7 +69,7 @@ def post(request):
     return JsonResponse({"message": "Posted successfully."}, status=201)
 
 
-@login_required
+@ login_required
 def get_profile(request, username):
 
     posts = []
@@ -46,17 +78,18 @@ def get_profile(request, username):
     user = User.objects.get(id=request.user.id)
     following_this_user = False
     print(user)
+
     # get specific user and followers
     userprofile = User.objects.get(username=username)
     username = userprofile.username
-    following = userprofile.following
-    if UserFollowers.objects.filter(user=userprofile.id).exists():
-        obj = UserFollowers.objects.filter(user=userprofile.id)
-        follower_obj = obj.followers
-        follower_count = len(follower_obj)
-        for follower in follower_obj:
-            if follower.username == username:
-                following_this_user == True
+    followers = userprofile.number_of_followers
+
+    obj = UserFollowers.objects.get_or_create(user=userprofile.id)
+    following_obj = obj.following
+    follower_count = len(following_obj)
+    for follower in follower_obj:
+        if follower.username == username:
+            following_this_user == True
 
     # get posts and order in reverse chronological order
     if Post.objects.filter(user=userprofile.id).exists():

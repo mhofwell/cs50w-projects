@@ -14,8 +14,27 @@ document.addEventListener('DOMContentLoaded', function() {
                         postButton.disabled = false;
                 }
         });
+
         loadFeed('all');
 });
+
+function follow() {
+        const username = document.querySelector('#profile-name').textContent;
+        console.log(username);
+        // change property of email's read to true
+        fetch(`/follow/${username}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                        follow: true,
+                }),
+        })
+                .then(response => response.json())
+                .then(result => {
+                        console.log(result);
+                });
+}
+
+function unfollow() {}
 
 function post() {
         fetch('/post', {

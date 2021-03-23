@@ -1,0 +1,18 @@
+Follow-feature: 
+
+User-stories:
+---------------------
+As a user I want to follow another user so that I can add them to a list of people I want to keep up with. 
+
+As a user I want to unfollow another user to remove them from a list of people I want to keep up with. 
+
+
+Tasks: 
+---------------------
+- Create an API route to update follower array and counter. 
+- urls.py route
+- view.py function to manipulate database. 
+- static.js function to grab the follow button and send a request to the server to update followers. 
+
+
+

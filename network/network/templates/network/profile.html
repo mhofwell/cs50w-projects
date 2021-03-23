@@ -5,15 +5,14 @@
 <div class='profile-header'>
     <div class='profile-title-wrapper'>
         <div id="profile-title">
-            <h2>{{ username }}</h2>
+            <h2 id='profile-name'>{{ username }}</h2>
         </div>
         {% if user.is_authenticated %}
         {% if user != userprofile %}
         {% if following_this_user == False %}
-        <button type="button" onclick="follow()" value="follow" class='btn btn-primary' id="follow">Follow Me!</button>
+        <button type="button" value="follow" onclick='follow()' class='btn btn-primary' id="follow">Follow Me!</button>
         {% else %}
-        <button type="button" onclick="unfollow()" value="unfollow" class='btn btn-primary'
-            id="unfollow">Unfollow</button>
+        <button type="button" value="unfollow" class='btn btn-primary' id="unfollow">Unfollow</button>
         {% endif %}
         {% endif %}
         {% endif %}
