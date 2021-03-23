@@ -43,19 +43,24 @@ def get_profile(request, username):
     posts = []
     follower_obj = []
     follower_count = 0
-
+    user = User.objects.get(id=request.user.id)
+    following_this_user = False
+    print(user)
     # get specific user and followers
-    user = User.objects.get(username=username)
-    username = user.username
-    following = user.following
-    if UserFollowers.objects.filter(user=user).exists():
-        obj = UserFollowers.objects.filter(user=user)
+    userprofile = User.objects.get(username=username)
+    username = userprofile.username
+    following = userprofile.following
+    if UserFollowers.objects.filter(user=userprofile.id).exists():
+        obj = UserFollowers.objects.filter(user=userprofile.id)
         follower_obj = obj.followers
         follower_count = len(follower_obj)
+        for follower in follower_obj:
+            if follower.username == username:
+                following_this_user == True
 
     # get posts and order in reverse chronological order
-    if Post.objects.filter(user=user).exists():
-        posts = Post.objects.filter(user=user)
+    if Post.objects.filter(user=userprofile.id).exists():
+        posts = Post.objects.filter(user=userprofile.id)
         posts = posts.order_by('-timestamp').all()
 
     return render(request, "network/profile.html", {
@@ -63,7 +68,10 @@ def get_profile(request, username):
         'follower_count': follower_count,
         'following': following,
         'username': username,
-        'posts': posts
+        'posts': posts,
+        'user': user,
+        'userprofile': userprofile,
+        'following_this_user': following_this_user
     })
 
 

@@ -2,19 +2,48 @@
 {% load static %}
 
 {% block body %}
-<div id="profile-title">
-    {{username}}
-</div>
-<div id="follower-count">
-    Following: {{ following }}
-</div>
-<div id="follower-count">
-    Followers: {{ follower_count }}
+<div class='profile-header'>
+    <div class='profile-title-wrapper'>
+        <div id="profile-title">
+            <h2>{{ username }}</h2>
+        </div>
+        {% if user.is_authenticated %}
+        {% if user != userprofile %}
+        {% if following_this_user == False %}
+        <button type="button" onclick="follow()" value="follow" class='btn btn-primary' id="follow">Follow Me!</button>
+        {% else %}
+        <button type="button" onclick="unfollow()" value="unfollow" class='btn btn-primary'
+            id="unfollow">Unfollow</button>
+        {% endif %}
+        {% endif %}
+        {% endif %}
+    </div>
+
+    <div class='follower-count-wrapper'>
+        <div id="follower-count">
+            Following: {{ following }}
+        </div>
+        <div id="follower-count">
+            Followers: {{ follower_count }}
+        </div>
+    </div>
 </div>
 <div id="userposts">
     {% for post in posts %}
-    <div class='user-post'>
-        {{post}}
+    <div class="post-wrapper">
+        <div class="post-user">
+            <a>{{ post.posted_by }}</a>
+        </div>
+        <div class="post-body">
+            {{ post.timestamp }}
+        </div>
+        <div class="post-body">
+            {{post.body}}
+        </div>
+        <div class="post-body">
+            {{post.likes}}
+        </div>
+        <button type="button" onclick="like()" value="Like" class='btn btn-primary' id="like">Like</button>
     </div>
     {% endfor %}
 </div>
