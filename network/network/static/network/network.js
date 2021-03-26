@@ -18,24 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
         loadFeed('all');
 });
 
-function follow() {
-        const username = document.querySelector('#profile-name').textContent;
-        console.log(username);
-        // change property of email's read to true
-        fetch(`/follow/${username}`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                        follow: true,
-                }),
-        })
-                .then(response => response.json())
-                .then(result => {
-                        console.log(result);
-                });
-}
-
-function unfollow() {}
-
 function post() {
         fetch('/post', {
                 method: 'POST',
@@ -55,8 +37,28 @@ function loadFeed(group) {
                 document.querySelector('#title').innerHTML = `<h3>${group.charAt(0).toUpperCase() +
                         group.slice(1)} Posts</h3><hr>`;
         } else if (group === 'following') {
+                const newsfeed = document.querySelector('#newsfeed');
+
+                if (newsfeed) {
+                        newsfeed.innerHTML = '';
+                } else {
+                        const profileHeader = document.querySelector('#profile-container');
+                        const profilePosts = document.querySelector('#userposts');
+
+                        if (profileHeader && profilePosts) {
+                                profileHeader.innerHTML = '';
+                                profilePosts.innerHTML = '';
+                                const body = document.querySelector('body');
+                                const element = document.createElement('div');
+                                element.id = 'title';
+                                element.className = 'title';
+                                body.append(element);
+                        }
+                }
+
                 document.querySelector('#title').innerHTML = `<h3>${group.charAt(0).toUpperCase() +
                         group.slice(1)}</h3><hr>`;
+                document.querySelector('#post-container').innerHTML = '';
         }
         fetch(`/posts/${group}`)
                 .then(response => response.json())
@@ -71,7 +73,6 @@ function loadFeed(group) {
 
 function addPost(userpost) {
         // create an element for the post
-        console.log(userpost.id);
         const element = document.createElement('div');
         element.className = 'post';
 
@@ -93,9 +94,22 @@ function addPost(userpost) {
                 <button type="button" onclick="like()" value="Like" class='btn btn-primary' id="like">Like</button>
         </div>
         `;
-        console.log(element);
         // append the element to some parent node on the page.
         document.querySelector('#newsfeed').append(element);
+}
+
+function follow() {
+        const username = document.querySelector('#profile-name').textContent;
+        console.log(username);
+        // change property of email's read to true
+        fetch(`/follow/${username}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                        follow: true,
+                }),
+        })
+                .then(response => response.json())
+                .then(result => console.log(result));
 }
 
 // function like() {
@@ -109,3 +123,5 @@ function addPost(userpost) {
 //         console.log('You updated the like counter!');
 //         return true;
 // }
+
+// function unfollow() {}

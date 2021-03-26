@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-from .models import Post, User, PostForm, UserFollowers
+from .models import Post, User, PostForm, Follow
 from django.core import serializers
 
 
@@ -20,38 +20,60 @@ def index(request):
 
 @login_required
 @csrf_exempt
+def following(request):
+    # get the user
+    cur_user = User.objects.get(pk=request.user.id)
+
+    # get the following object
+    following = set()
+
+    if Follow.objects.filter(user=cur_user).exists():
+        obj = Follow.objects.get(user=cur_user)
+        following = obj.following
+
+    print(following)
+
+    # get the posts from each user in the following object, put it in a list.
+    posts = []
+
+    if len(following) > 0:
+        for person in following:
+            user_posts = Post.objects.filter(user=person)
+            posts.append(user_posts)
+            # reverse chronological
+
+            # send it out to the template
+        posts.order_by('-timestamp').all()
+    print(posts)
+
+    return render('')
+
+
+@login_required
+@csrf_exempt
 def follow(request, username):
-    # Query for requested User, User_to_follow and UserFollower list
-    user = request.user
-    print(user)
-    user_to_follow = User.objects.get(username=username)
-    try:
-        follower_list = UserFollowers.objects.get_or_create(user=request.user)
-    except UserFollowers.DoesNotExist:
-        return JsonResponse({"error": "Follower list not found."}, status=404)
-
-    # handle PUT request
     if request.method == "PUT":
-        data = json.loads(request.body)
-        if data.get("follow") is not None:
-            count = user.following
-            user.following = (count + 1)
-            user.save()
-            print("added +1")
-            follower_list.append(user_to_follow)
-            print("appended")
-            follower_list.save()
-        return JsonResponse({"success": "Follower list updated."}, tatus=204)
+        try:
+            # get current user
+            user = User.objects.get(id=request.user.id)
+            profile = User.objects.get(username=username)
 
-    # Follow must be via PUT
-    else:
-        return JsonResponse({
-            "error": "PUT request required."
-        }, status=400)
+            obj, create = Follow.objects.get_or_create(user=user)
+            obj.following.add(profile)
+            obj.save()
+
+            obj, create = Follow.objects.get_or_create(user=profile)
+            obj.follower.add(user)
+            obj.save()
+
+            # return reverse loading of the profile page(?)
+            return JsonResponse({"success": "user followed successfully"}, status=200)
+        except:
+            return JsonResponse({"error": "user followed unsuccessfully"}, status=400)
 
 
-@ login_required
-@ csrf_exempt
+@login_required
+@csrf_exempt
 def post(request):
     user = User.objects.get(pk=request.user.id)
     if request.method != "POST":
@@ -69,75 +91,87 @@ def post(request):
     return JsonResponse({"message": "Posted successfully."}, status=201)
 
 
-@ login_required
+@login_required
+@csrf_exempt
 def get_profile(request, username):
 
-    posts = []
-    follower_obj = []
-    follower_count = 0
-    user = User.objects.get(id=request.user.id)
-    following_this_user = False
-    print(user)
+    # get the current user
+    req_user = User.objects.get(id=request.user.id)
 
-    # get specific user and followers
-    userprofile = User.objects.get(username=username)
-    username = userprofile.username
-    followers = userprofile.number_of_followers
+    # get the username of the profile you are looking at
+    user_profile = User.objects.get(username=username)
+    user_profile_name = user_profile.username
 
-    obj = UserFollowers.objects.get_or_create(user=userprofile.id)
-    following_obj = obj.following
-    follower_count = len(following_obj)
-    for follower in follower_obj:
-        if follower.username == username:
-            following_this_user == True
+    # get the number_of_followers and following
+    if Follow.objects.filter(user=user_profile).exists():
+        user_follow_object = Follow.objects.get(user=user_profile)
 
-    # get posts and order in reverse chronological order
-    if Post.objects.filter(user=userprofile.id).exists():
-        posts = Post.objects.filter(user=userprofile.id)
-        posts = posts.order_by('-timestamp').all()
+        number_of_followers = len(user_follow_object.followers)
+        number_of_following = len(user_follow_object.following)
+        # check to see if request_user is already following this profile
+        list_of_followers = user_follow_object.followers
+        for follower in list_of_followers:
+            if follower == req_user:
+                following_this_user = True
+    else:
+        number_of_followers = 0
+        number_of_following = 0
+        following_this_user = False
+
+    print(number_of_followers)
+    print(following_this_user)
+
+    # get all posts for user_profile
+    if Post.objects.filter(user=user_profile).exists():
+        profile_posts = Post.objects.filter(user=user_profile)
+        profile_posts = profile_posts.order_by('-timestamp').all()
+    else:
+        profile_posts = []
+
+    print(profile_posts)
+
+    # check to see if user == username
+    if req_user == user_profile:
+        same_user = True
+    else:
+        same_user = False
 
     return render(request, "network/profile.html", {
-        'followers': follower_obj,
-        'follower_count': follower_count,
-        'following': following,
-        'username': username,
-        'posts': posts,
-        'user': user,
-        'userprofile': userprofile,
-        'following_this_user': following_this_user
+        "same_user": same_user,
+        "req_user": req_user,
+        "user_profile": user_profile,
+        "posts": profile_posts,
+        "number_of_followers": number_of_followers,
+        "number_of_following": number_of_following,
+        "following_this_user": following_this_user,
+        "user_profile_name": user_profile_name
+
     })
 
 
 def load_posts(request, group):
+
+    posts = Post.objects.none()
+
     # get all posts
     if group == "all":
         posts = Post.objects.all()
-        print(posts)
-        if posts == None:
-            return JsonResponse({"error": "No posts to show!"}, status=400)
 
     # get followers posts only
     elif group == "following":
-        followers = []
-        if UserFollowers.objects.filter(user=request.user.id).exists():
-            user = UserFollowers.objects.filter(
-                user=request.user.id
-            )
-
-            # get all of a users followers
-            followers = user.followers.all()
+        user = User.objects.get(id=request.user.id)
+        if Follow.objects.filter(user=user).exists():
+            obj = Follow.objects.get(user=user)
+            following = obj.following
 
             # for each follower, get their posts and add it to a list
-            for follower in followers:
-                posts = []
-                posts.append(Post.objects.get(user=follower))
-
+            for person in following:
+                posts.append(Post.objects.get(user=person))
     else:
         return JsonResponse({"error": "Invalid request for newsfeed posts."}, status=400)
 
     # Return posts in reverse chronologial order
     posts = posts.order_by("-timestamp").all()
-    print(type(posts))
     # s_posts = serializers.serialize("json", posts)
     return JsonResponse([post.serialize() for post in posts], safe=False)
 

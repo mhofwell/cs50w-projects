@@ -2,28 +2,31 @@
 {% load static %}
 
 {% block body %}
-<div class='profile-header'>
-    <div class='profile-title-wrapper'>
-        <div id="profile-title">
-            <h2 id='profile-name'>{{ username }}</h2>
+<div id='profile-container'>
+    <div class='profile-header'>
+        <div class='profile-title-wrapper'>
+            <div id="profile-title">
+                <h2 id='profile-name'>{{ user_profile_name }}</h2>
+            </div>
+            {% if user.is_authenticated %}
+            {% if same_user == False %}
+            {% if following_this_user == False %}
+            <button type="button" value="follow" onclick="follow()" class='btn btn-primary' id="follow-button">Follow
+                Me!</button>
+            {% else %}
+            <button type="button" value="unfollow" class='btn btn-primary' id="unfollow">Unfollow</button>
+            {% endif %}
+            {% endif %}
+            {% endif %}
         </div>
-        {% if user.is_authenticated %}
-        {% if user != userprofile %}
-        {% if following_this_user == False %}
-        <button type="button" value="follow" onclick='follow()' class='btn btn-primary' id="follow">Follow Me!</button>
-        {% else %}
-        <button type="button" value="unfollow" class='btn btn-primary' id="unfollow">Unfollow</button>
-        {% endif %}
-        {% endif %}
-        {% endif %}
-    </div>
 
-    <div class='follower-count-wrapper'>
-        <div id="follower-count">
-            Following: {{ following }}
-        </div>
-        <div id="follower-count">
-            Followers: {{ follower_count }}
+        <div class='follower-count-wrapper'>
+            <div id="follower-count">
+                Following: {{ number_of_following }}
+            </div>
+            <div id="follower-count">
+                Followers: {{ number_of_followers }}
+            </div>
         </div>
     </div>
 </div>

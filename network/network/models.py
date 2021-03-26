@@ -7,8 +7,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 class User(AbstractUser):
     pass
-    number_of_followers = models.IntegerField(
-        default=0, validators=[MinValueValidator(0)])
 
 
 class Post(models.Model):
@@ -30,13 +28,13 @@ class Post(models.Model):
         }
 
 
-class UserFollowers(models.Model):
+class Follow(models.Model):
     user = models.ForeignKey("User", related_name='user',
                              on_delete=models.CASCADE)
-    following = models.ManyToManyField("User", related_name='followers')
-
-    def __str__(self):
-        return f"{self.following}"
+    following = models.ManyToManyField(
+        "User", related_name='following', default=None)
+    followers = models.ManyToManyField(
+        "User", related_name='followers', default=None)
 
 
 class PostForm(ModelForm):

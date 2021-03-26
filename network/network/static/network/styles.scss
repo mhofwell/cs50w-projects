@@ -26,3 +26,11 @@ body {
     width: 25%;
     text-align: right;
 }
+
+.nav-link, .nav-item {
+    cursor: pointer;
+}
+
+.title, .profile-container {
+    padding: 10px; 
+}

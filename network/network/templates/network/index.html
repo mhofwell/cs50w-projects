@@ -2,22 +2,23 @@
 {% load static %}
 
 {% block body %}
-<div id="title">
+<div class="title" id="title">
 </div>
 {% if user.is_authenticated %}
-<div class="post-wrapper">
-    <form id="post-form">
-        <div>
-            <label class="form-label">New Post</label>
-            {{ form.body }}
-        </div>
-        <div>
-            <input type="submit" value="Post" class="btn btn-primary" id="post-button">
-        </div>
-    </form>
+<div id="post-container">
+    <div class="post-wrapper">
+        <form id="post-form">
+            <div>
+                <label class="form-label">New Post</label>
+                {{ form.body }}
+            </div>
+            <div>
+                <input type="submit" value="Post" class="btn btn-primary" id="post-button">
+            </div>
+        </form>
+    </div>
+    {% endif %}
 </div>
-{% endif %}
-
 <div id="newsfeed"></div>
 
 {% endblock %}
