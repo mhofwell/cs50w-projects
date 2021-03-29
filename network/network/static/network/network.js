@@ -58,7 +58,10 @@ function loadFeed(group) {
 
                 document.querySelector('#title').innerHTML = `<h3>${group.charAt(0).toUpperCase() +
                         group.slice(1)}</h3><hr>`;
-                document.querySelector('#post-container').innerHTML = '';
+                const postContainer = document.querySelector('#post-container');
+                if (postContainer) {
+                        document.querySelector('#post-container').innerHTML = '';
+                }
         }
         fetch(`/posts/${group}`)
                 .then(response => response.json())

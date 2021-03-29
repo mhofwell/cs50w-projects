@@ -106,17 +106,19 @@ def get_profile(request, username):
     if Follow.objects.filter(user=user_profile).exists():
         user_follow_object = Follow.objects.get(user=user_profile)
 
-        number_of_followers = len(user_follow_object.followers)
-        number_of_following = len(user_follow_object.following)
+        number_of_followers = user_follow_object.followers.count()
+        number_of_following = user_follow_object.following.count()
         # check to see if request_user is already following this profile
-        list_of_followers = user_follow_object.followers
+        list_of_followers = user_follow_object.followers.all()
+        print(list_of_followers)
         for follower in list_of_followers:
             if follower == req_user:
                 following_this_user = True
     else:
         number_of_followers = 0
         number_of_following = 0
-        following_this_user = False
+
+    following_this_user = False
 
     print(number_of_followers)
     print(following_this_user)
@@ -151,8 +153,6 @@ def get_profile(request, username):
 
 def load_posts(request, group):
 
-    posts = Post.objects.none()
-
     # get all posts
     if group == "all":
         posts = Post.objects.all()
@@ -162,11 +162,12 @@ def load_posts(request, group):
         user = User.objects.get(id=request.user.id)
         if Follow.objects.filter(user=user).exists():
             obj = Follow.objects.get(user=user)
-            following = obj.following
+            following = obj.following.all()
 
             # for each follower, get their posts and add it to a list
+            posts = []
             for person in following:
-                posts.append(Post.objects.get(user=person))
+                posts.append(Post.objects.filter(user=person))
     else:
         return JsonResponse({"error": "Invalid request for newsfeed posts."}, status=400)
 
