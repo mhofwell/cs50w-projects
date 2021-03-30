@@ -33,13 +33,14 @@ def following(request):
 
     print(following)
 
-    # get the posts from each user in the following object, put it in a list.
-    posts = []
+    # # get the posts from each user in the following object, put it in a list.
+    # posts = set()
 
     if len(following) > 0:
         for person in following:
             user_posts = Post.objects.filter(user=person)
-            posts.append(user_posts)
+            posts = posts.append(user_posts)
+            print(posts)
             # reverse chronological
 
             # send it out to the template
@@ -153,6 +154,7 @@ def get_profile(request, username):
 
 def load_posts(request, group):
 
+    posts = Post.objects.none()
     # get all posts
     if group == "all":
         posts = Post.objects.all()
@@ -165,9 +167,8 @@ def load_posts(request, group):
             following = obj.following.all()
 
             # for each follower, get their posts and add it to a list
-            posts = []
             for person in following:
-                posts.append(Post.objects.filter(user=person))
+                posts = posts | Post.objects.filter(user=person)
     else:
         return JsonResponse({"error": "Invalid request for newsfeed posts."}, status=400)
 

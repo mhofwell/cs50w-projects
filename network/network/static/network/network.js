@@ -59,6 +59,7 @@ function loadFeed(group) {
                 document.querySelector('#title').innerHTML = `<h3>${group.charAt(0).toUpperCase() +
                         group.slice(1)}</h3><hr>`;
                 const postContainer = document.querySelector('#post-container');
+
                 if (postContainer) {
                         document.querySelector('#post-container').innerHTML = '';
                 }
