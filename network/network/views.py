@@ -20,57 +20,40 @@ def index(request):
 
 @login_required
 @csrf_exempt
-def following(request):
-    # get the user
-    cur_user = User.objects.get(pk=request.user.id)
-
-    # get the following object
-    following = set()
-
-    if Follow.objects.filter(user=cur_user).exists():
-        obj = Follow.objects.get(user=cur_user)
-        following = obj.following
-
-    print(following)
-
-    # # get the posts from each user in the following object, put it in a list.
-    # posts = set()
-
-    if len(following) > 0:
-        for person in following:
-            user_posts = Post.objects.filter(user=person)
-            posts = posts.append(user_posts)
-            print(posts)
-            # reverse chronological
-
-            # send it out to the template
-        posts.order_by('-timestamp').all()
-    print(posts)
-
-    return render('')
-
-
-@login_required
-@csrf_exempt
 def follow(request, username):
     if request.method == "PUT":
-        try:
-            # get current user
-            user = User.objects.get(id=request.user.id)
-            profile = User.objects.get(username=username)
+        data = json.loads(request.body)
+        follow = data.get("follow", "")
+        print(follow)
+        # get current user
+        user = User.objects.get(id=request.user.id)
+        print(user)
+        profile = User.objects.get(username=username)
+        print(username)
+        if follow == True:
+            try:
+                obj, create = Follow.objects.get_or_create(user=user)
+                obj.following.add(profile)
+                obj.save()
 
-            obj, create = Follow.objects.get_or_create(user=user)
-            obj.following.add(profile)
-            obj.save()
+                obj, create = Follow.objects.get_or_create(user=profile)
+                obj.followers.add(user)
+                obj.save()
+                return JsonResponse({"success": "user followed successfully"}, status=200)
+            except:
+                return JsonResponse({"error": "user followed unsuccessfully"}, status=400)
+        else:
+            try:
+                obj = Follow.objects.get(user=user)
+                obj.following.remove(profile)
+                obj.save()
 
-            obj, create = Follow.objects.get_or_create(user=profile)
-            obj.follower.add(user)
-            obj.save()
-
-            # return reverse loading of the profile page(?)
-            return JsonResponse({"success": "user followed successfully"}, status=200)
-        except:
-            return JsonResponse({"error": "user followed unsuccessfully"}, status=400)
+                obj = Follow.objects.get(user=profile)
+                obj.followers.remove(user)
+                obj.save()
+                return JsonResponse({"success": "user unfollowed successfully"}, status=200)
+            except:
+                return JsonResponse({"error": "user unfollowed unsuccessfully"}, status=400)
 
 
 @login_required
@@ -96,16 +79,17 @@ def post(request):
 @csrf_exempt
 def get_profile(request, username):
 
+    following_this_user = False
     # get the current user
     req_user = User.objects.get(id=request.user.id)
-
+    print(req_user)
     # get the username of the profile you are looking at
     user_profile = User.objects.get(username=username)
     user_profile_name = user_profile.username
-
+    print(user_profile_name)
     # get the number_of_followers and following
     if Follow.objects.filter(user=user_profile).exists():
-        user_follow_object = Follow.objects.get(user=user_profile)
+        user_follow_object = Follow.objects.get(user=user_profile.id)
 
         number_of_followers = user_follow_object.followers.count()
         number_of_following = user_follow_object.following.count()
@@ -114,15 +98,11 @@ def get_profile(request, username):
         print(list_of_followers)
         for follower in list_of_followers:
             if follower == req_user:
+                print(follower)
                 following_this_user = True
     else:
         number_of_followers = 0
         number_of_following = 0
-
-    following_this_user = False
-
-    print(number_of_followers)
-    print(following_this_user)
 
     # get all posts for user_profile
     if Post.objects.filter(user=user_profile).exists():
@@ -130,8 +110,6 @@ def get_profile(request, username):
         profile_posts = profile_posts.order_by('-timestamp').all()
     else:
         profile_posts = []
-
-    print(profile_posts)
 
     # check to see if user == username
     if req_user == user_profile:
@@ -154,12 +132,11 @@ def get_profile(request, username):
 
 def load_posts(request, group):
 
-    posts = Post.objects.none()
     # get all posts
     if group == "all":
         posts = Post.objects.all()
 
-    # get followers posts only
+    # get posts from people you're following only
     elif group == "following":
         user = User.objects.get(id=request.user.id)
         if Follow.objects.filter(user=user).exists():
@@ -167,6 +144,8 @@ def load_posts(request, group):
             following = obj.following.all()
 
             # for each follower, get their posts and add it to a list
+            posts = Post.objects.none()
+
             for person in following:
                 posts = posts | Post.objects.filter(user=person)
     else:

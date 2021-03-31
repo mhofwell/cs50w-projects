@@ -11,10 +11,10 @@
             {% if user.is_authenticated %}
             {% if same_user == False %}
             {% if following_this_user == False %}
-            <button type="button" value="follow" onclick="follow()" class='btn btn-primary' id="follow-button">Follow
+            <button type="submit" value="follow" class='btn btn-primary' id="follow-button">Follow
                 Me!</button>
             {% else %}
-            <button type="button" value="unfollow" class='btn btn-primary' id="unfollow">Unfollow</button>
+            <button type="submit" value="follow" class='btn btn-primary' id="follow-button">Unfollow</button>
             {% endif %}
             {% endif %}
             {% endif %}

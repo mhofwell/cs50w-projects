@@ -1,14 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('#following').addEventListener('click', () => loadFeed('following'));
 
-        const postForm = document.querySelector('#post-form');
-        postForm.disabled = true;
-        postForm.onsubmit = post;
-
-        const body = document.querySelector('#post-body');
         const postButton = document.querySelector('#post-button');
+        const postBody = document.querySelector('#post-body');
+
+        if (postButton) {
+                postButton.onclick = post;
+                postButton.disabled = true;
+        }
+
         document.addEventListener('keyup', () => {
-                if (body.value.length === 0) {
+                if (postBody.value.length === 0) {
                         postButton.disabled = true;
                 } else {
                         postButton.disabled = false;
@@ -99,17 +101,35 @@ function addPost(userpost) {
         </div>
         `;
         // append the element to some parent node on the page.
-        document.querySelector('#newsfeed').append(element);
+        if (document.querySelector('#newsfeed')) {
+                document.querySelector('#newsfeed').append(element);
+        } else {
+                document.querySelector('#title').append(element);
+        }
 }
 
 function follow() {
         const username = document.querySelector('#profile-name').textContent;
         console.log(username);
-        // change property of email's read to true
+
         fetch(`/follow/${username}`, {
                 method: 'PUT',
                 body: JSON.stringify({
                         follow: true,
+                }),
+        })
+                .then(response => response.json())
+                .then(result => console.log(result));
+}
+
+function unfollow() {
+        const username = document.querySelector('#profile-name').textContent;
+        console.log(username);
+
+        fetch(`/follow/${username}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                        follow: false,
                 }),
         })
                 .then(response => response.json())
