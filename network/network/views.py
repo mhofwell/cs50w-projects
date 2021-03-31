@@ -1,6 +1,7 @@
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core import paginator
 from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -13,9 +14,15 @@ from django.core.paginator import Paginator
 
 
 def index(request):
+    p = Post.objects.all()
+    p = p.order_by("-timestamp").all()
+    paginated = Paginator(p, 10)
+
+    page_number = request.GET.get('page')
+    page_obj = paginated.get_page(page_number)
     return render(request, "network/index.html", {
         'form': PostForm(),
-        'posts': Post.objects.all(),
+        'page_obj': page_obj,
     })
 
 
@@ -172,9 +179,9 @@ def load_posts(request, group):
 
     # Return posts in reverse chronologial order
     posts = posts.order_by("-timestamp").all()
-    p = Paginator(posts, 10)
+    # p = Paginator(posts, 10)
 
-    return JsonResponse([post.serialize() for post in p], safe=False)
+    return JsonResponse([post.serialize() for post in posts], safe=False)
 
 
 def login_view(request):
