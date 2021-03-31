@@ -17,8 +17,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
         });
 
+        if (document.querySelector('#follow-button')) {
+                document.querySelector('#follow-button').addEventListener('click', () => {
+                        const username = document.querySelector('#profile-name').textContent;
+                        update(username);
+                });
+        }
+
         loadFeed('all');
 });
+
+async function update(username) {
+        const followButton = document.querySelector('#follow-button');
+        if (followButton.innerText === 'Follow Me!') {
+                await follow(username);
+                followButton.innerText = 'Unfollow';
+        } else if (followButton.innerText === 'Unfollow') {
+                await unfollow(username);
+                followButton.innerText = 'Follow Me!';
+        }
+}
 
 function post() {
         fetch('/post', {
@@ -108,11 +126,8 @@ function addPost(userpost) {
         }
 }
 
-function follow() {
-        const username = document.querySelector('#profile-name').textContent;
-        console.log(username);
-
-        fetch(`/follow/${username}`, {
+async function follow(username) {
+        await fetch(`/follow/${username}`, {
                 method: 'PUT',
                 body: JSON.stringify({
                         follow: true,
@@ -120,13 +135,11 @@ function follow() {
         })
                 .then(response => response.json())
                 .then(result => console.log(result));
+        await updateFollowerCount(username);
 }
 
-function unfollow() {
-        const username = document.querySelector('#profile-name').textContent;
-        console.log(username);
-
-        fetch(`/follow/${username}`, {
+async function unfollow(username) {
+        await fetch(`/follow/${username}`, {
                 method: 'PUT',
                 body: JSON.stringify({
                         follow: false,
@@ -134,6 +147,16 @@ function unfollow() {
         })
                 .then(response => response.json())
                 .then(result => console.log(result));
+        await updateFollowerCount(username);
+}
+
+async function updateFollowerCount(username) {
+        await fetch(`/followcount/${username}`)
+                .then(response => response.text())
+                .then(text => {
+                        console.log(text);
+                        document.querySelector('#follower-count').innerText = text;
+                });
 }
 
 // function like() {

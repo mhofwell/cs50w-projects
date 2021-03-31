@@ -21,11 +21,21 @@
         </div>
 
         <div class='follower-count-wrapper'>
-            <div id="follower-count">
-                Following: {{ number_of_following }}
+            <div class="following" id="following">
+                <div>
+                    Following:
+                </div>
+                <div id="following-count">
+                    {{ number_of_following }}
+                </div>
             </div>
-            <div id="follower-count">
-                Followers: {{ number_of_followers }}
+            <div class="followers" id="followers">
+                <div>
+                    Followers:
+                </div>
+                <div id="follower-count">
+                    {{ number_of_followers }}
+                </div>
             </div>
         </div>
     </div>

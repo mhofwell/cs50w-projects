@@ -34,3 +34,8 @@ body {
 .title, .profile-container {
     padding: 10px; 
 }
+
+.following, .followers {
+    display: flex; 
+    text-align: right;
+}

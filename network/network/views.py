@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from .models import Post, User, PostForm, Follow
 from django.core import serializers
+from django.core.paginator import Paginator
 
 
 def index(request):
@@ -24,12 +25,10 @@ def follow(request, username):
     if request.method == "PUT":
         data = json.loads(request.body)
         follow = data.get("follow", "")
-        print(follow)
+
         # get current user
         user = User.objects.get(id=request.user.id)
-        print(user)
         profile = User.objects.get(username=username)
-        print(username)
         if follow == True:
             try:
                 obj, create = Follow.objects.get_or_create(user=user)
@@ -57,6 +56,26 @@ def follow(request, username):
 
 
 @login_required
+def count(request, username):
+    if request.method == "GET":
+        try:
+            # get the username of the profile to update
+            user = User.objects.get(username=username)
+            print(user)
+            obj = Follow.objects.get(user=user)
+            print(obj)
+
+            # get the current follower count length
+            count = obj.followers.count()
+            print(count)
+
+            # return that length
+            return JsonResponse(count, safe=False, status=200)
+        except:
+            return JsonResponse({"error": "Can't access profile or follower list"}, status=400)
+
+
+@login_required
 @csrf_exempt
 def post(request):
     user = User.objects.get(pk=request.user.id)
@@ -80,25 +99,25 @@ def post(request):
 def get_profile(request, username):
 
     following_this_user = False
+
     # get the current user
     req_user = User.objects.get(id=request.user.id)
-    print(req_user)
+
     # get the username of the profile you are looking at
     user_profile = User.objects.get(username=username)
     user_profile_name = user_profile.username
-    print(user_profile_name)
+
     # get the number_of_followers and following
     if Follow.objects.filter(user=user_profile).exists():
         user_follow_object = Follow.objects.get(user=user_profile.id)
 
         number_of_followers = user_follow_object.followers.count()
         number_of_following = user_follow_object.following.count()
+
         # check to see if request_user is already following this profile
         list_of_followers = user_follow_object.followers.all()
-        print(list_of_followers)
         for follower in list_of_followers:
             if follower == req_user:
-                print(follower)
                 following_this_user = True
     else:
         number_of_followers = 0
@@ -153,8 +172,9 @@ def load_posts(request, group):
 
     # Return posts in reverse chronologial order
     posts = posts.order_by("-timestamp").all()
-    # s_posts = serializers.serialize("json", posts)
-    return JsonResponse([post.serialize() for post in posts], safe=False)
+    p = Paginator(posts, 10)
+
+    return JsonResponse([post.serialize() for post in p], safe=False)
 
 
 def login_view(request):
