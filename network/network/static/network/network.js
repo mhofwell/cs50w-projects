@@ -1,5 +1,17 @@
+// global JavaScript variables
+const list = [];
+const pageList = [];
+const currentPage = 1;
+const numberPerPage = 10;
+const numberOfPages = 1; // calculates the total number of pages
+
 document.addEventListener('DOMContentLoaded', function() {
-        document.querySelector('#following').addEventListener('click', () => loadFeed('following'));
+        document.querySelector('#following').addEventListener('click', () => getPosts('following'));
+
+        document.querySelector('#first').onclick = firstPage;
+        document.querySelector('#next').onclick = nextPage;
+        document.querySelector('#previous').onclick = previousPage;
+        document.querySelector('#last').onclick = lastPage;
 
         const postButton = document.querySelector('#post-button');
         const postBody = document.querySelector('#post-body');
@@ -23,8 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         update(username);
                 });
         }
-
-        loadFeed('all');
+        getPosts('all');
+        const numberOfPages = getNumberOfPages();
+        loadList();
 });
 
 async function update(username) {
@@ -51,7 +64,7 @@ function post() {
                 });
 }
 
-function loadFeed(group) {
+async function getPosts(group) {
         // Show the group name
         if (group === 'all') {
                 document.querySelector('#title').innerHTML = `<h3>${group.charAt(0).toUpperCase() +
@@ -84,14 +97,16 @@ function loadFeed(group) {
                         document.querySelector('#post-container').innerHTML = '';
                 }
         }
-        fetch(`/posts/${group}`)
+        await fetch(`/posts/${group}`)
                 .then(response => response.json())
-                .then(data =>
-                        data.forEach(userpost => {
-                                JSON.stringify(userpost);
-                                // add post
-                                addPost(userpost);
-                        })
+                .then(
+                        data =>
+                                data.forEach(userpost => {
+                                        JSON.stringify(userpost);
+                                        // add post
+                                        addPost(userpost);
+                                })
+                        // after all posts are sent to the list, append the list?
                 );
 }
 
@@ -118,12 +133,59 @@ function addPost(userpost) {
                 <button type="button" onclick="like()" value="Like" class='btn btn-primary' id="like">Like</button>
         </div>
         `;
-        // append the element to some parent node on the page.
-        if (document.querySelector('#newsfeed')) {
-                document.querySelector('#newsfeed').append(element);
-        } else {
-                document.querySelector('#title').append(element);
+        // push each HTML element into the list array.
+        list.push(element);
+}
+
+function getNumberOfPages() {
+        return Math.ceil(list.length / numberPerPage);
+}
+
+function nextPage() {
+        var currentPage = currentPage + 1;
+        loadList();
+}
+
+function previousPage() {
+        var currentPage = currentPage - 1;
+        loadList();
+}
+
+function firstPage() {
+        const currentPage = 1;
+        loadList();
+}
+
+function lastPage() {
+        const currentPage = numberOfPages;
+        loadList();
+}
+
+function drawList() {
+        document.querySelector('#newsfeed').innerHTML = '';
+        for (r = 0; r < pageList.length; r++) {
+                if (document.querySelector('#newsfeed')) {
+                        document.querySelector('newsfeed').append += `${pageList[r]}<br/>`;
+                } else {
+                        document.querySelector('#title').append += `${pageList[r]}<br/>`;
+                }
         }
+}
+
+function loadList() {
+        const begin = (currentPage - 1) * numberPerPage;
+        const end = begin + numberPerPage;
+
+        const pageList = list.slice(begin, end);
+        drawList(); // draws out our data
+        check(); // determines the states of the pagination buttons
+}
+
+function check() {
+        document.getElementById('next').disabled = currentPage == numberOfPages;
+        document.getElementById('previous').disabled = currentPage == 1;
+        document.getElementById('first').disabled = currentPage == 1;
+        document.getElementById('last').disabled = currentPage == numberOfPages;
 }
 
 async function follow(username) {
@@ -158,6 +220,8 @@ async function updateFollowerCount(username) {
                         document.querySelector('#follower-count').innerText = text;
                 });
 }
+
+// ///////////////////// Pagination
 
 // function like() {
 //         // create the route to add +1 to the like counter
