@@ -154,47 +154,34 @@ function addPost(userpost) {
 }
 
 async function getNumberOfPages() {
-<<<<<<< HEAD
         numberOfPages = Math.ceil(list.length / numberPerPage);
 }
 
 function nextPage() {
         currentPage = currentPage + 1;
-=======
-        const numberOfPages = Math.ceil(list.length / numberPerPage);
+        numberOfPages = Math.ceil(list.length / numberPerPage);
 }
 
 function nextPage() {
-        const currentPage = currentPage + 1;
->>>>>>> parent of 1c39502... posts loaded successfully
+        currentPage = currentPage + 1;
         loadList();
 }
 
 function previousPage() {
-<<<<<<< HEAD
+
         currentPage = currentPage - 1;
-=======
-        const currentPage = currentPage - 1;
->>>>>>> parent of 1c39502... posts loaded successfully
         loadList();
 }
 
 // CAREFUL TO WIRE UP VARIABLES IN EACH FUNCTION!!!!
 function firstPage() {
-<<<<<<< HEAD
+
         currentPage = 1;
-=======
-        const currentPage = 1;
->>>>>>> parent of 1c39502... posts loaded successfully
         loadList();
 }
 
 function lastPage() {
-<<<<<<< HEAD
         currentPage = numberOfPages;
-=======
-        const currentPage = numberOfPages;
->>>>>>> parent of 1c39502... posts loaded successfully
         loadList();
 }
 
