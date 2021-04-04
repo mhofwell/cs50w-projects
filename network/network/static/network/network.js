@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Can I make a function to async await: 1) getPosts, getNumberOfPages, then loadList.
-async function paginate(type) {
+async function paginate(group) {
         // surface all posts to list array variable
-        await getPosts(type);
+        await getPosts(group);
         // then calculate the number of pages and store it in numberOfPages
         await getNumberOfPages();
         // then loadList
@@ -154,27 +154,27 @@ function addPost(userpost) {
 }
 
 async function getNumberOfPages() {
-        let numberOfPages = Math.ceil(list.length / numberPerPage);
+        numberOfPages = Math.ceil(list.length / numberPerPage);
 }
 
 function nextPage() {
-        let currentPage = currentPage + 1;
+        currentPage = currentPage + 1;
         loadList();
 }
 
 function previousPage() {
-        let currentPage = currentPage - 1;
+        currentPage = currentPage - 1;
         loadList();
 }
 
 // CAREFUL TO WIRE UP VARIABLES IN EACH FUNCTION!!!!
 function firstPage() {
-        let currentPage = 1;
+        currentPage = 1;
         loadList();
 }
 
 function lastPage() {
-        let currentPage = numberOfPages;
+        currentPage = numberOfPages;
         loadList();
 }
 
