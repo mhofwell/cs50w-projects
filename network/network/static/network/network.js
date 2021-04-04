@@ -1,10 +1,9 @@
 // global JavaScript variables
-/* eslint-disable*/
-let list = [];
-let pageList = [];
-let currentPage = 1;
-let numberPerPage = 10;
-let numberOfPages = 1; // calculates the total number of pages
+const list = [];
+const pageList = [];
+const currentPage = 1;
+const numberPerPage = 10;
+const numberOfPages = 1; // calculates the total number of pages
 
 document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('#following').addEventListener('click', () => paginate('following'));
@@ -37,19 +36,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         }
         if (document.querySelector('#title')) {
-                const title = document.querySelector('#title');
+                const title = doucment.querySelector('#title');
         }
 
-        if (document.querySelector('#post-container')) {
-                const type = 'all';
+        if (document.querySelector('h3').textContent === 'All Posts') {
+                const type = 'All Posts';
                 paginate(type);
         }
 });
 
 // Can I make a function to async await: 1) getPosts, getNumberOfPages, then loadList.
-async function paginate(group) {
+
+async function paginate(type) {
         // surface all posts to list array variable
-        await getPosts(group);
+        await getPosts(type);
         // then calculate the number of pages and store it in numberOfPages
         await getNumberOfPages();
         // then loadList
@@ -154,39 +154,68 @@ function addPost(userpost) {
 }
 
 async function getNumberOfPages() {
+<<<<<<< HEAD
         numberOfPages = Math.ceil(list.length / numberPerPage);
 }
 
 function nextPage() {
         currentPage = currentPage + 1;
+=======
+        const numberOfPages = Math.ceil(list.length / numberPerPage);
+}
+
+function nextPage() {
+        const currentPage = currentPage + 1;
+>>>>>>> parent of 1c39502... posts loaded successfully
         loadList();
 }
 
 function previousPage() {
+<<<<<<< HEAD
         currentPage = currentPage - 1;
+=======
+        const currentPage = currentPage - 1;
+>>>>>>> parent of 1c39502... posts loaded successfully
         loadList();
 }
 
 // CAREFUL TO WIRE UP VARIABLES IN EACH FUNCTION!!!!
 function firstPage() {
+<<<<<<< HEAD
         currentPage = 1;
+=======
+        const currentPage = 1;
+>>>>>>> parent of 1c39502... posts loaded successfully
         loadList();
 }
 
 function lastPage() {
+<<<<<<< HEAD
         currentPage = numberOfPages;
+=======
+        const currentPage = numberOfPages;
+>>>>>>> parent of 1c39502... posts loaded successfully
         loadList();
 }
 
 function drawList() {
         document.querySelector('#newsfeed').innerHTML = '';
-        for (let r = 0; r < pageList.length; r += 1) {
+        for (let r = 0; r < pageList.length; r++) {
                 if (document.querySelector('#newsfeed')) {
-                        document.querySelector('#newsfeed').append(pageList[r]);
+                        document.querySelector('newsfeed').append += `${pageList[r]}<br/>`;
                 } else {
-                        document.querySelector('#title').append(pageList[r]);
+                        document.querySelector('#title').append += `${pageList[r]}<br/>`;
                 }
         }
+}
+
+function loadList() {
+        const begin = (currentPage - 1) * numberPerPage;
+        const end = begin + numberPerPage;
+
+        const pageList = list.slice(begin, end);
+        drawList(); // draws out our data
+        check(); // determines the states of the pagination buttons
 }
 
 function check() {
@@ -194,15 +223,6 @@ function check() {
         document.getElementById('previous').disabled = currentPage === 1;
         document.getElementById('first').disabled = currentPage === 1;
         document.getElementById('last').disabled = currentPage === numberOfPages;
-}
-
-function loadList() {
-        let begin = (currentPage - 1) * numberPerPage;
-        let end = begin + numberPerPage;
-
-        pageList = list.slice(begin, end);
-        drawList(); // draws out our data
-        check(); // determines the states of the pagination buttons
 }
 
 async function follow(username) {
