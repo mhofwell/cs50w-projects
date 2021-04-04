@@ -1,9 +1,10 @@
 // global JavaScript variables
-const list = [];
-const pageList = [];
-const currentPage = 1;
-const numberPerPage = 10;
-const numberOfPages = 1; // calculates the total number of pages
+/* eslint-disable*/
+let list = [];
+let pageList = [];
+let currentPage = 1;
+let numberPerPage = 10;
+let numberOfPages = 1; // calculates the total number of pages
 
 document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('#following').addEventListener('click', () => paginate('following'));
@@ -36,17 +37,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         }
         if (document.querySelector('#title')) {
-                const title = doucment.querySelector('#title');
+                const title = document.querySelector('#title');
         }
 
-        if (document.querySelector('h3').textContent === 'All Posts') {
-                const type = 'All Posts';
+        if (document.querySelector('#post-container')) {
+                const type = 'all';
                 paginate(type);
         }
 });
 
 // Can I make a function to async await: 1) getPosts, getNumberOfPages, then loadList.
-
 async function paginate(type) {
         // surface all posts to list array variable
         await getPosts(type);
@@ -154,48 +154,39 @@ function addPost(userpost) {
 }
 
 async function getNumberOfPages() {
-        const numberOfPages = Math.ceil(list.length / numberPerPage);
+        let numberOfPages = Math.ceil(list.length / numberPerPage);
 }
 
 function nextPage() {
-        const currentPage = currentPage + 1;
+        let currentPage = currentPage + 1;
         loadList();
 }
 
 function previousPage() {
-        const currentPage = currentPage - 1;
+        let currentPage = currentPage - 1;
         loadList();
 }
 
 // CAREFUL TO WIRE UP VARIABLES IN EACH FUNCTION!!!!
 function firstPage() {
-        const currentPage = 1;
+        let currentPage = 1;
         loadList();
 }
 
 function lastPage() {
-        const currentPage = numberOfPages;
+        let currentPage = numberOfPages;
         loadList();
 }
 
 function drawList() {
         document.querySelector('#newsfeed').innerHTML = '';
-        for (let r = 0; r < pageList.length; r++) {
+        for (let r = 0; r < pageList.length; r += 1) {
                 if (document.querySelector('#newsfeed')) {
-                        document.querySelector('newsfeed').append += `${pageList[r]}<br/>`;
+                        document.querySelector('#newsfeed').append(pageList[r]);
                 } else {
-                        document.querySelector('#title').append += `${pageList[r]}<br/>`;
+                        document.querySelector('#title').append(pageList[r]);
                 }
         }
-}
-
-function loadList() {
-        const begin = (currentPage - 1) * numberPerPage;
-        const end = begin + numberPerPage;
-
-        const pageList = list.slice(begin, end);
-        drawList(); // draws out our data
-        check(); // determines the states of the pagination buttons
 }
 
 function check() {
@@ -203,6 +194,15 @@ function check() {
         document.getElementById('previous').disabled = currentPage === 1;
         document.getElementById('first').disabled = currentPage === 1;
         document.getElementById('last').disabled = currentPage === numberOfPages;
+}
+
+function loadList() {
+        let begin = (currentPage - 1) * numberPerPage;
+        let end = begin + numberPerPage;
+
+        pageList = list.slice(begin, end);
+        drawList(); // draws out our data
+        check(); // determines the states of the pagination buttons
 }
 
 async function follow(username) {
