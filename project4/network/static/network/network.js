@@ -159,16 +159,15 @@ async function getNumberOfPages() {
 }
 
 function nextPage() {
-        currentPage = currentPage + 1;
+        currentPage += 1;
         numberOfPages = Math.ceil(list.length / numberPerPage);
 }
 
 function previousPage() {
-        currentPage = currentPage - 1;
+        currentPage -= 1;
         loadList();
 }
 
-// CAREFUL TO WIRE UP VARIABLES IN EACH FUNCTION!!!!
 function firstPage() {
         currentPage = 1;
         loadList();
@@ -191,8 +190,8 @@ function drawList() {
 }
 
 function loadList() {
-        let begin = (currentPage - 1) * numberPerPage;
-        let end = begin + numberPerPage;
+        const begin = (currentPage - 1) * numberPerPage;
+        const end = begin + numberPerPage;
 
         pageList = list.slice(begin, end);
         drawList(); // draws out our data
@@ -238,8 +237,6 @@ async function updateFollowerCount(username) {
                         document.querySelector('#follower-count').innerText = text;
                 });
 }
-
-// ///////////////////// Pagination
 
 // function like() {
 //         // create the route to add +1 to the like counter
