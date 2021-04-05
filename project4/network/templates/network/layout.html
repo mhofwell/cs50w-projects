@@ -26,8 +26,8 @@
                     <a class="nav-link" href="{% url 'index' %}">All Posts</a>
                 </li>
                 {% if user.is_authenticated %}
-                <li class="nav-item" id="following">
-                    <a class="nav-link">Following</a>
+                <li class="nav-item">
+                    <a class="nav-link" id="following">Following</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
@@ -48,8 +48,8 @@
         {% block body %}
         {% endblock %}
     </div>
-
-    <script src="{% static 'network/network.js' %}"></script>
+    <script src="{% static 'network/network.js' %}">
+    </script>
 </body>
 
 </html>

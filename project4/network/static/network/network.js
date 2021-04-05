@@ -37,11 +37,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         }
         if (document.querySelector('#title')) {
-                const title = doucment.querySelector('#title');
+                const title = document.querySelector('#title');
         }
 
         if (document.querySelector('h3').textContent === 'All Posts') {
-                const type = 'All Posts';
+                const type = 'all';
                 paginate(type);
         }
 });
@@ -159,15 +159,16 @@ async function getNumberOfPages() {
 }
 
 function nextPage() {
-        currentPage += 1;
+        currentPage = currentPage + 1;
         numberOfPages = Math.ceil(list.length / numberPerPage);
 }
 
 function previousPage() {
-        currentPage -= 1;
+        currentPage = currentPage - 1;
         loadList();
 }
 
+// CAREFUL TO WIRE UP VARIABLES IN EACH FUNCTION!!!!
 function firstPage() {
         currentPage = 1;
         loadList();
@@ -182,7 +183,7 @@ function drawList() {
         document.querySelector('#newsfeed').innerHTML = '';
         for (let r = 0; r < pageList.length; r++) {
                 if (document.querySelector('#newsfeed')) {
-                        document.querySelector('newsfeed').append(pageList[r]);
+                        document.querySelector('#newsfeed').append(pageList[r]);
                 } else {
                         document.querySelector('#title').append(pageList[r]);
                 }
@@ -190,8 +191,8 @@ function drawList() {
 }
 
 function loadList() {
-        const begin = (currentPage - 1) * numberPerPage;
-        const end = begin + numberPerPage;
+        let begin = (currentPage - 1) * numberPerPage;
+        let end = begin + numberPerPage;
 
         pageList = list.slice(begin, end);
         drawList(); // draws out our data
@@ -237,6 +238,8 @@ async function updateFollowerCount(username) {
                         document.querySelector('#follower-count').innerText = text;
                 });
 }
+
+// ///////////////////// Pagination
 
 // function like() {
 //         // create the route to add +1 to the like counter
