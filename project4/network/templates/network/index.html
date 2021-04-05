@@ -1,0 +1,35 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="title" id="title">
+    <h3>All Posts</h3>
+</div>
+{% if user.is_authenticated %}
+<div id="post-container">
+    <div class="post-wrapper">
+        <form id="post-form">
+            <div>
+                <label class="form-label">New Post</label>
+                {{ form.body }}
+            </div>
+            <div>
+                <input type="submit" value="Post" class="btn btn-primary" id="post-button">
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</div>
+<div class="pagination-container">
+    <div class="pagination-nav">
+        <input type="button" class="btn btn-primary" id="first" value="first" />
+        <input type="button" class="btn btn-primary" id="next" value="next" />
+        <input type="button" class="btn btn-primary" id="previous" value="previous" />
+        <input type="button" class="btn btn-primary" id="last" value="last" />
+    </div>
+
+    <div id="newsfeed">
+
+    </div>
+</div>
+{% endblock %}
