@@ -210,7 +210,7 @@ function drawList() {
                         document.querySelector('#userposts').appendChild(pageList[r]);
                 }
 
-                // figure out how to best add the event listener
+                // figure out how to best add the event listener to the button to grab the data.
                 // document.querySelector('#like').addEventListener('click', e => {
                 //         like(e);
                 // });
