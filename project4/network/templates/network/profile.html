@@ -40,24 +40,17 @@
         </div>
     </div>
 </div>
-<div id="userposts">
-    {% for post in posts %}
-    <div class="post-wrapper">
-        <div class="post-user">
-            <a>{{ post.posted_by }}</a>
-        </div>
-        <div class="post-body">
-            {{ post.timestamp }}
-        </div>
-        <div class="post-body">
-            {{post.body}}
-        </div>
-        <div class="post-body">
-            {{post.likes}}
-        </div>
-        <button type="button" onclick="like()" value="Like" class='btn btn-primary' id="like">Like</button>
+<div class="pagination-container">
+    <div class="pagination-nav">
+        <input type="button" class="btn btn-primary" id="first" value="first" />
+        <input type="button" class="btn btn-primary" id="next" value="next" />
+        <input type="button" class="btn btn-primary" id="previous" value="previous" />
+        <input type="button" class="btn btn-primary" id="last" value="last" />
     </div>
-    {% endfor %}
+
+    <div id="userposts">
+
+    </div>
 </div>
 
 {% endblock %}

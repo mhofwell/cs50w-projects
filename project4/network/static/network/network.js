@@ -1,18 +1,26 @@
 // global JavaScript variables
-/* eslint-disable */
 let list = [];
 let pageList = [];
 let currentPage = 1;
-let numberPerPage = 10;
+const numberPerPage = 10;
 let numberOfPages = 1; // calculates the total number of pages
+
+// next paginate user profile.
+// get the profile template
+// on load search for the title
+// if its a username
+// get posts from that user
+// display
 
 document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('#following').addEventListener('click', () => paginate('following'));
 
-        document.querySelector('#first').onclick = firstPage;
-        document.querySelector('#next').onclick = nextPage;
-        document.querySelector('#previous').onclick = previousPage;
-        document.querySelector('#last').onclick = lastPage;
+        if (document.querySelector('#first')) {
+                document.querySelector('#first').onclick = firstPage;
+                document.querySelector('#next').onclick = nextPage;
+                document.querySelector('#previous').onclick = previousPage;
+                document.querySelector('#last').onclick = lastPage;
+        }
 
         const postButton = document.querySelector('#post-button');
         const postBody = document.querySelector('#post-body');
@@ -40,21 +48,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 const title = document.querySelector('#title');
         }
 
-        if (document.querySelector('h3').textContent === 'All Posts') {
-                const type = 'all';
-                paginate(type);
+        if (document.querySelector('#profile-name')) {
+                const profileName = document.querySelector('#profile-name').innerText;
+                console.log(profileName);
+                paginate(profileName);
+        }
+
+        if (document.querySelector('h3') && document.querySelector('h3').textContent === 'All Posts') {
+                const group = 'all';
+                paginate(group);
         }
 });
 
-// Can I make a function to async await: 1) getPosts, getNumberOfPages, then loadList.
-
-async function paginate(type) {
-        // surface all posts to list array variable
-        await getPosts(type);
-        // then calculate the number of pages and store it in numberOfPages
-        await getNumberOfPages();
-        // then loadList
-        loadList();
+async function paginate(group) {
+        try {
+                await getPosts(group);
+                // then calculate the number of pages and store it in numberOfPages
+                await getNumberOfPages();
+                // then loadList
+                loadList();
+        } catch (error) {
+                console.error(error);
+        }
 }
 
 async function update(username) {
@@ -82,6 +97,8 @@ function post() {
 }
 
 async function getPosts(group) {
+        // reset the list array
+        list = [];
         // Show the group name
         if (group === 'all') {
                 document.querySelector('#title').innerHTML = `<h3>${group.charAt(0).toUpperCase() +
@@ -116,14 +133,13 @@ async function getPosts(group) {
         }
         await fetch(`/posts/${group}`)
                 .then(response => response.json())
-                .then(
-                        data =>
-                                data.forEach(userpost => {
-                                        JSON.stringify(userpost);
-                                        // add post
-                                        addPost(userpost);
-                                })
-                        // after all posts are sent to the list, append the list?
+                .then(data =>
+                        data.forEach(userpost => {
+                                JSON.stringify(userpost);
+                                // add post
+                                console.log(userpost);
+                                addPost(userpost);
+                        })
                 );
 }
 
@@ -159,12 +175,12 @@ async function getNumberOfPages() {
 }
 
 function nextPage() {
-        currentPage = currentPage + 1;
-        numberOfPages = Math.ceil(list.length / numberPerPage);
+        currentPage += 1;
+        loadList();
 }
 
 function previousPage() {
-        currentPage = currentPage - 1;
+        currentPage -= 1;
         loadList();
 }
 
@@ -180,19 +196,23 @@ function lastPage() {
 }
 
 function drawList() {
-        document.querySelector('#newsfeed').innerHTML = '';
+        if (document.querySelector('#newsfeed')) {
+                document.querySelector('#newsfeed').innerHTML = '';
+        }
         for (let r = 0; r < pageList.length; r++) {
                 if (document.querySelector('#newsfeed')) {
                         document.querySelector('#newsfeed').append(pageList[r]);
+                } else if (document.querySelector('#title')) {
+                        document.querySelector('#title').appendChild(pageList[r]);
                 } else {
-                        document.querySelector('#title').append(pageList[r]);
+                        document.querySelector('#userposts').appendChild(pageList[r]);
                 }
         }
 }
 
 function loadList() {
-        let begin = (currentPage - 1) * numberPerPage;
-        let end = begin + numberPerPage;
+        const begin = (currentPage - 1) * numberPerPage;
+        const end = begin + numberPerPage;
 
         pageList = list.slice(begin, end);
         drawList(); // draws out our data

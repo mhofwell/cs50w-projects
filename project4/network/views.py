@@ -14,15 +14,9 @@ from django.core.paginator import Paginator
 
 
 def index(request):
-    p = Post.objects.all()
-    p = p.order_by("-timestamp").all()
-    paginated = Paginator(p, 10)
 
-    page_number = request.GET.get('page')
-    page_obj = paginated.get_page(page_number)
     return render(request, "network/index.html", {
         'form': PostForm(),
-        'page_obj': page_obj,
     })
 
 
@@ -157,31 +151,33 @@ def get_profile(request, username):
 
 
 def load_posts(request, group):
+    posts = Post.objects.none()
+    try:
+        # get all posts
+        if group == "all":
+            posts = Post.objects.all()
 
-    # get all posts
-    if group == "all":
-        posts = Post.objects.all()
+        # get posts from people you're following only
+        elif group == "following":
+            user = User.objects.get(id=request.user.id)
+            if Follow.objects.filter(user=user).exists():
+                obj = Follow.objects.get(user=user)
+                following = obj.following.all()
 
-    # get posts from people you're following only
-    elif group == "following":
-        user = User.objects.get(id=request.user.id)
-        if Follow.objects.filter(user=user).exists():
-            obj = Follow.objects.get(user=user)
-            following = obj.following.all()
+                # for each follower, get their posts and add it to a list
 
-            # for each follower, get their posts and add it to a list
-            posts = Post.objects.none()
+                for person in following:
+                    posts = posts | Post.objects.filter(user=person)
+        else:
+            user = User.objects.get(username=group)
+            posts = Post.objects.filter(user=user)
 
-            for person in following:
-                posts = posts | Post.objects.filter(user=person)
-    else:
+        # Return posts in reverse chronologial order
+        posts = posts.order_by("-timestamp").all()
+
+        return JsonResponse([post.serialize() for post in posts], safe=False)
+    except:
         return JsonResponse({"error": "Invalid request for newsfeed posts."}, status=400)
-
-    # Return posts in reverse chronologial order
-    posts = posts.order_by("-timestamp").all()
-    # p = Paginator(posts, 10)
-
-    return JsonResponse([post.serialize() for post in posts], safe=False)
 
 
 def login_view(request):
