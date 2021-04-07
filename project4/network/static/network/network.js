@@ -163,7 +163,9 @@ function addPost(userpost) {
                 <div class="post-body">
                         ${userpost.likes}
                 </div>
-                <button type="button" onclick="like()" value="Like" class='btn btn-primary' id="like">Like</button>
+                <div data-postId="${userpost.id}">
+                        <button type="button" value="Like" class='btn btn-primary' id="like">Like</button>
+                </div>
         </div>
         `;
         // push each HTML element into the list array.
@@ -207,6 +209,11 @@ function drawList() {
                 } else {
                         document.querySelector('#userposts').appendChild(pageList[r]);
                 }
+
+                // figure out how to best add the event listener
+                // document.querySelector('#like').addEventListener('click', e => {
+                //         like(e);
+                // });
         }
 }
 
@@ -259,18 +266,13 @@ async function updateFollowerCount(username) {
                 });
 }
 
-// ///////////////////// Pagination
-
-// function like() {
-//         // create the route to add +1 to the like counter
-//         console.log('you liked this post!');
-//         return true;
-// }
+function like(e) {
+        // create the route to add +1 to the like counter
+        console.log(e.target.parentNode.dataset.postId);
+}
 
 // function updateLikeCounter() {
 //         // fetch the new counter number and update the element.
 //         console.log('You updated the like counter!');
 //         return true;
 // }
-
-// function unfollow() {}
