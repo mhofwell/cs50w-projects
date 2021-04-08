@@ -5,13 +5,6 @@ let currentPage = 1;
 const numberPerPage = 10;
 let numberOfPages = 1; // calculates the total number of pages
 
-// next paginate user profile.
-// get the profile template
-// on load search for the title
-// if its a username
-// get posts from that user
-// display
-
 document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('#following').addEventListener('click', () => paginate('following'));
 
@@ -30,13 +23,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 postButton.disabled = true;
         }
 
-        document.addEventListener('keyup', () => {
-                if (postBody.value.length === 0) {
-                        postButton.disabled = true;
-                } else {
-                        postButton.disabled = false;
-                }
-        });
+        if (document.querySelector('#post-form')) {
+                document.addEventListener('keyup', () => {
+                        if (postBody.value.length === 0) {
+                                postButton.disabled = true;
+                        } else {
+                                postButton.disabled = false;
+                        }
+                });
+        }
 
         if (document.querySelector('#follow-button')) {
                 document.querySelector('#follow-button').addEventListener('click', () => {
@@ -136,8 +131,8 @@ async function getPosts(group) {
                 .then(data =>
                         data.forEach(userpost => {
                                 JSON.stringify(userpost);
+
                                 // add post
-                                console.log(userpost);
                                 addPost(userpost);
                         })
                 );
@@ -160,10 +155,10 @@ function addPost(userpost) {
                 <div class="post-body">
                         ${userpost.body}
                 </div>
-                <div class="post-body">
+                <div id="c${userpost.id}" class="post-body">
                         ${userpost.likes}
                 </div>
-                <div data-postId="${userpost.id}">
+                <div data-postid="${userpost.id}">
                         <button type="button" value="Like" class='btn btn-primary' id="like">Like</button>
                 </div>
         </div>
@@ -209,12 +204,15 @@ function drawList() {
                 } else {
                         document.querySelector('#userposts').appendChild(pageList[r]);
                 }
-
-                // figure out how to best add the event listener to the button to grab the data.
-                // document.querySelector('#like').addEventListener('click', e => {
-                //         like(e);
-                // });
         }
+}
+
+function addLikeListener() {
+        document.querySelectorAll('#like').forEach(button => {
+                button.addEventListener('click', e => {
+                        like(e);
+                });
+        });
 }
 
 function loadList() {
@@ -223,6 +221,7 @@ function loadList() {
 
         pageList = list.slice(begin, end);
         drawList(); // draws out our data
+        addLikeListener(); // adds an event listener for likes
         check(); // determines the states of the pagination buttons
 }
 
@@ -266,13 +265,27 @@ async function updateFollowerCount(username) {
                 });
 }
 
-function like(e) {
-        // create the route to add +1 to the like counter
-        console.log(e.target.parentNode.dataset.postId);
+async function like(e) {
+        const id = e.target.parentNode.dataset.postid;
+        console.log(id);
+        await fetch(`/like/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                        like: true,
+                }),
+        })
+                .then(response => response.json())
+                .then(result => {
+                        console.log(result);
+                });
+        await updateLikeCount(id);
 }
 
-// function updateLikeCounter() {
-//         // fetch the new counter number and update the element.
-//         console.log('You updated the like counter!');
-//         return true;
-// }
+async function updateLikeCount(id) {
+        await fetch(`/likecount/${id}`)
+                .then(response => response.text())
+                .then(likes => {
+                        console.log(likes);
+                        document.querySelector(`#c${id}`).innerText = likes;
+                });
+}

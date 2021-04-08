@@ -16,6 +16,8 @@ class Post(models.Model):
         "User", on_delete=models.PROTECT, related_name='posted_by')
     body = models.TextField(max_length=350, blank=True)
     likes = models.PositiveIntegerField(default=0)
+    likedby = models.ManyToManyField(
+        "User", related_name="liked", default=None)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def serialize(self):

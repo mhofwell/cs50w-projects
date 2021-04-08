@@ -22,6 +22,30 @@ def index(request):
 
 @login_required
 @csrf_exempt
+def like(request, postid):
+    if request.method == "PUT":
+        post = Post.objects.get(id=postid)
+        post.likes += 1
+        post.save()
+        return JsonResponse({"success": "post liked successfully"}, status=200)
+    else:
+        return JsonResponse({"error": "Not a put request"}, status=400)
+
+
+@login_required
+@csrf_exempt
+def like_count(request, postid):
+    if request.method == "GET":
+        try:
+            post = Post.objects.get(id=postid)
+            likes = post.likes
+            return JsonResponse(likes, safe=False, status=200)
+        except:
+            return JsonResponse({"error": "Can't access post"}, status=400)
+
+
+@login_required
+@csrf_exempt
 def follow(request, username):
     if request.method == "PUT":
         data = json.loads(request.body)
