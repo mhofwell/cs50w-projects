@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (document.querySelector('#follow-button')) {
                 document.querySelector('#follow-button').addEventListener('click', () => {
                         const username = document.querySelector('#profile-name').textContent;
-                        update(username);
+                        updateFollowButton(username);
                 });
         }
         if (document.querySelector('#title')) {
@@ -67,7 +67,7 @@ async function paginate(group) {
         }
 }
 
-async function update(username) {
+async function updateFollowButton(username) {
         const followButton = document.querySelector('#follow-button');
         if (followButton.innerText === 'Follow Me!') {
                 await follow(username);
@@ -142,7 +142,6 @@ function addPost(userpost) {
         // create an element for the post
         const element = document.createElement('div');
         element.className = 'post';
-
         // format the element with the appropriate data
         element.innerHTML = `
         <div class="post-wrapper">
@@ -159,7 +158,8 @@ function addPost(userpost) {
                         ${userpost.likes}
                 </div>
                 <div data-postid="${userpost.id}">
-                        <button type="button" value="Like" class='btn btn-primary' id="like">Like</button>
+                        <button type="button" data-buttonid="${userpost.id}" value="Like" class='btn btn-primary' id="like">Like</button>
+
                 </div>
         </div>
         `;
@@ -207,7 +207,7 @@ function drawList() {
         }
 }
 
-function addLikeListener() {
+async function addLikeListener() {
         document.querySelectorAll('#like').forEach(button => {
                 button.addEventListener('click', e => {
                         like(e);
@@ -222,6 +222,7 @@ function loadList() {
         pageList = list.slice(begin, end);
         drawList(); // draws out our data
         addLikeListener(); // adds an event listener for likes
+        likeCheck(); // sets the buttons to like or unlike
         check(); // determines the states of the pagination buttons
 }
 
@@ -267,18 +268,45 @@ async function updateFollowerCount(username) {
 
 async function like(e) {
         const id = e.target.parentNode.dataset.postid;
-        console.log(id);
+        const button = e.target;
+        const state = button.innerText;
+        let likeBoolean = false;
+
+        if (state === 'Like') {
+                button.innerText = 'Unlike';
+                likeBoolean = true;
+        } else if (state === 'Unlike') {
+                button.innerText = 'Like';
+                likeBoolean = false;
+        }
+
         await fetch(`/like/${id}`, {
                 method: 'PUT',
                 body: JSON.stringify({
-                        like: true,
+                        like: `${likeBoolean}`,
                 }),
         })
                 .then(response => response.json())
                 .then(result => {
                         console.log(result);
                 });
+
         await updateLikeCount(id);
+}
+
+async function likeCheck() {
+        await fetch('/likedposts', {
+                method: 'GET',
+        })
+                .then(response => response.json())
+                .then(result =>
+                        result.forEach(postId => {
+                                if (document.querySelector(`button[data-buttonid="${postId}"]`)) {
+                                        document.querySelector(`button[data-buttonid="${postId}"]`).textContent =
+                                                'Unlike';
+                                }
+                        })
+                );
 }
 
 async function updateLikeCount(id) {

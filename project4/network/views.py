@@ -2,13 +2,14 @@ import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core import paginator
+from django.db.models.query_utils import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-from .models import Post, Follow, PostForm, User
+from .models import Post, Follow, PostForm, User, Likes
 from django.core import serializers
 from django.core.paginator import Paginator
 
@@ -22,12 +23,47 @@ def index(request):
 
 @login_required
 @csrf_exempt
+def liked_posts(request):
+    user = request.user
+    print(user)
+    post_numbers = []
+    if Likes.objects.filter(user=user).exists():
+        try:
+            like_obj = Likes.objects.get(user=user)
+            liked_posts = like_obj.liked_posts.all()
+            for post in liked_posts:
+                print(post.id)
+                post_numbers.append(post.id)
+            print(post_numbers)
+            return JsonResponse(post_numbers, safe=False)
+        except:
+            return JsonResponse({"error": "Something went wrong!"}, status=400)
+
+
+@login_required
+@csrf_exempt
 def like(request, postid):
     if request.method == "PUT":
+        user = User.objects.get(id=request.user.id)
+        print(user)
+        data = json.loads(request.body)
         post = Post.objects.get(id=postid)
-        post.likes += 1
+        # Why is this giving me trouble?
+        obj, create = Likes.objects.get_or_create(user=user)
+
+        like_boolean = data.get("like", "")
+
+        if (like_boolean == "true"):
+            post.likes += 1
+            obj.liked_posts.add(post)
+        else:
+            post.likes -= 1
+            obj.liked_posts.remove(post)
+            if (post.likes < 0):
+                post.likes = 0
         post.save()
-        return JsonResponse({"success": "post liked successfully"}, status=200)
+        obj.save()
+        return JsonResponse({"success": "Likes adjusted successfully"}, status=200)
     else:
         return JsonResponse({"error": "Not a put request"}, status=400)
 
@@ -128,6 +164,12 @@ def get_profile(request, username):
     # get the current user
     req_user = User.objects.get(id=request.user.id)
 
+    # get the like array
+
+    if Likes.objects.filter(user=req_user).exists():
+        like_array = Likes.objects.get(user=req_user)
+        liked_posts = like_array.liked_posts
+
     # get the username of the profile you are looking at
     user_profile = User.objects.get(username=username)
     user_profile_name = user_profile.username
@@ -169,7 +211,8 @@ def get_profile(request, username):
         "number_of_followers": number_of_followers,
         "number_of_following": number_of_following,
         "following_this_user": following_this_user,
-        "user_profile_name": user_profile_name
+        "user_profile_name": user_profile_name,
+        "like_array": liked_posts
 
     })
 

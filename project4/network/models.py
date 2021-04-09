@@ -30,6 +30,13 @@ class Post(models.Model):
         }
 
 
+class Likes(models.Model):
+    user = models.ForeignKey("User", related_name='user_likes',
+                             on_delete=models.CASCADE)
+    liked_posts = models.ManyToManyField(
+        "Post", related_name='liked_posts', default=None)
+
+
 class Follow(models.Model):
     user = models.ForeignKey("User", related_name='user',
                              on_delete=models.CASCADE)
