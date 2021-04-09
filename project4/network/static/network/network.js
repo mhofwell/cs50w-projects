@@ -141,6 +141,8 @@ async function getPosts(group) {
 function addPost(userpost) {
         // create an element for the post
         const element = document.createElement('div');
+        const username = document.querySelector('#username').textContent;
+
         element.className = 'post';
         // format the element with the appropriate data
         element.innerHTML = `
@@ -148,21 +150,62 @@ function addPost(userpost) {
                 <div class="post-user">
                         <a href="/profile/${userpost.posted_by}">${userpost.posted_by}</a>
                 </div>
-                <div class="post-body">
-                        ${userpost.timestamp}
-                </div>
-                <div class="post-body">
-                        ${userpost.body}
-                </div>
-                <div id="c${userpost.id}" class="post-body">
-                        ${userpost.likes}
-                </div>
-                <div data-postid="${userpost.id}">
-                        <button type="button" data-buttonid="${userpost.id}" value="Like" class='btn btn-primary' id="like">Like</button>
+                <div class="post-body">${userpost.timestamp}</div>
+                <div class="post-body" id="b${userpost.id}">${userpost.body}</div>
+                <div class="post-body" id="c${userpost.id}">${userpost.likes}</div>
+                <div class="button-row">
+                        <div class="post-button" data-postid="${userpost.id}">
+                                <button type="button" data-buttonid="${userpost.id}" value="like" class='btn btn-primary' id="like">Like</button>
 
-                </div>
+                        </div>
+                        <div id="e${userpost.id}" class="post-button">
+                                <button type="button" data-editid="${userpost.id}" value="edit" class='btn btn-primary' id="edit">Edit</button>
+
+                        </div>
+                </div> 
         </div>
         `;
+
+        if (username !== `${userpost.posted_by}`) {
+                element.innerHTML = `
+        <div class="post-wrapper">
+                <div class="post-user">
+                        <a href="/profile/${userpost.posted_by}">${userpost.posted_by}</a>
+                </div>
+                <div class="post-body">${userpost.timestamp}</div>
+                <div class="post-body" id="b${userpost.id}">${userpost.body}</div>
+                <div class="post-body" id="c${userpost.id}">${userpost.likes}</div>
+                <div class="button-row">
+                        <div class="post-button" data-postid="${userpost.id}">
+                                <button type="button" data-buttonid="${userpost.id}" value="like" class='btn btn-primary' id="like">Like</button>
+
+                        </div>
+                </div> 
+        </div>
+        `;
+        } else {
+                element.innerHTML = `
+        <div class="post-wrapper">
+                <div class="post-user">
+                        <a href="/profile/${userpost.posted_by}">${userpost.posted_by}</a>
+                </div>
+                <div class="post-body">${userpost.timestamp}</div>
+                <div class="post-body" id="b${userpost.id}">${userpost.body}</div>
+                <div class="post-body" id="c${userpost.id}">${userpost.likes}</div>
+                <div class="button-row">
+                        <div class="post-button" data-postid="${userpost.id}">
+                                <button type="button" data-buttonid="${userpost.id}" value="like" class='btn btn-primary' id="like">Like</button>
+
+                        </div>
+                        <div id="e${userpost.id}" class="post-button">
+                                <button type="button" data-editid="${userpost.id}" value="edit" class='btn btn-primary' id="edit">Edit</button>
+
+                        </div>
+                </div> 
+        </div>
+        `;
+        }
+
         // push each HTML element into the list array.
         list.push(element);
 }
@@ -221,7 +264,8 @@ function loadList() {
 
         pageList = list.slice(begin, end);
         drawList(); // draws out our data
-        addLikeListener(); // adds an event listener for likes
+        addLikeListener(); // adds an event listener for likes.
+        addEditListener(); // adds an event listener for editing.
         likeCheck(); // sets the buttons to like or unlike
         check(); // determines the states of the pagination buttons
 }
@@ -316,4 +360,52 @@ async function updateLikeCount(id) {
                         console.log(likes);
                         document.querySelector(`#c${id}`).innerText = likes;
                 });
+}
+
+function addEditListener() {
+        document.querySelectorAll('#edit').forEach(button => {
+                button.addEventListener('click', e => {
+                        edit(e);
+                });
+        });
+}
+
+function edit(e) {
+        const id = e.target.dataset.editid;
+        const body = document.querySelector(`#b${id}`);
+        const content = body.textContent;
+        const buttonContainer = document.querySelector(`#e${id}`);
+        body.innerHTML = `
+        <div class="textarea-container">
+                <textarea class="body-textarea" style="resize:none" cols="100" rows="5" id="body-textarea">${content}</textarea>
+        </div>
+        `;
+
+        // replace the save with edit button
+        buttonContainer.innerHTML = `<input type="submit" class="btn btn-primary" id="save" value="Save" />`;
+
+        // grab the updated content
+        document.querySelector('#save').addEventListener('click', () => {
+                const update = document.querySelector('#body-textarea').value;
+                console.log(update);
+                save(update, id, body);
+                buttonContainer.innerHTML = `<button type="button" data-editid="${id}" value="edit" class='btn btn-primary' id="edit">Edit</button>`;
+        });
+}
+
+async function save(update, id, body) {
+        console.log(update);
+        await fetch(`save/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                        body: update,
+                }),
+        })
+                .then(response => response.json())
+                .then(result => console.log(result));
+        await updatePost(update, body);
+}
+
+async function updatePost(update, body) {
+        body.textContent = update;
 }

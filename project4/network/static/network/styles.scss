@@ -44,3 +44,14 @@ body {
     text-align: center;
 }
 
+.button-row {
+    display: flex; 
+}
+.post-button { 
+    margin-right: 10px;
+    margin-top: 10px; 
+}
+
+.textarea-container {
+    width: 100%; 
+}

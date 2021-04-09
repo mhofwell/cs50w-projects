@@ -12,6 +12,7 @@ from django.urls import reverse
 from .models import Post, Follow, PostForm, User, Likes
 from django.core import serializers
 from django.core.paginator import Paginator
+from datetime import datetime
 
 
 def index(request):
@@ -134,6 +135,31 @@ def count(request, username):
             return JsonResponse(count, safe=False, status=200)
         except:
             return JsonResponse({"error": "Can't access profile or follower list"}, status=400)
+
+
+@login_required
+@csrf_exempt
+def save(request, id):
+    # get the objects
+    user = User.objects.get(user=request.user.id)
+    # find the post object
+    post = Post.objects.get(id=id)
+
+    try:
+        # Check to see if the user is the same as the post author.
+        if post.user == user:
+            # prepare the incomming data
+            data = json.loads(request.body)
+            new_content = data.get("body", "")
+            print(new_content)
+            post.body = new_content
+            now = datetime.now()
+            post.timestamp = now
+            post.save()
+            return JsonResponse({"success!": "Post updated successfully"}, status=200)
+
+    except:
+        return JsonResponse({"error": "Can't update this post."}, status=400)
 
 
 @login_required
