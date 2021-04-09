@@ -16,7 +16,7 @@ from datetime import datetime
 
 
 def index(request):
-
+    print(request.user)
     return render(request, "network/index.html", {
         'form': PostForm(),
     })
@@ -39,6 +39,8 @@ def liked_posts(request):
             return JsonResponse(post_numbers, safe=False)
         except:
             return JsonResponse({"error": "Something went wrong!"}, status=400)
+    else:
+        return JsonResponse(post_numbers, safe=False)
 
 
 @login_required
@@ -141,13 +143,16 @@ def count(request, username):
 @csrf_exempt
 def save(request, id):
     # get the objects
-    user = User.objects.get(user=request.user.id)
+    a = request.user
+    print(a)
     # find the post object
     post = Post.objects.get(id=id)
+    print(post.user)
+    print(a)
 
     try:
         # Check to see if the user is the same as the post author.
-        if post.user == user:
+        if post.user == a:
             # prepare the incomming data
             data = json.loads(request.body)
             new_content = data.get("body", "")
@@ -195,6 +200,8 @@ def get_profile(request, username):
     if Likes.objects.filter(user=req_user).exists():
         like_array = Likes.objects.get(user=req_user)
         liked_posts = like_array.liked_posts
+    else:
+        liked_posts = []
 
     # get the username of the profile you are looking at
     user_profile = User.objects.get(username=username)

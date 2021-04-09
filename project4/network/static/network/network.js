@@ -145,26 +145,6 @@ function addPost(userpost) {
 
         element.className = 'post';
         // format the element with the appropriate data
-        element.innerHTML = `
-        <div class="post-wrapper">
-                <div class="post-user">
-                        <a href="/profile/${userpost.posted_by}">${userpost.posted_by}</a>
-                </div>
-                <div class="post-body">${userpost.timestamp}</div>
-                <div class="post-body" id="b${userpost.id}">${userpost.body}</div>
-                <div class="post-body" id="c${userpost.id}">${userpost.likes}</div>
-                <div class="button-row">
-                        <div class="post-button" data-postid="${userpost.id}">
-                                <button type="button" data-buttonid="${userpost.id}" value="like" class='btn btn-primary' id="like">Like</button>
-
-                        </div>
-                        <div id="e${userpost.id}" class="post-button">
-                                <button type="button" data-editid="${userpost.id}" value="edit" class='btn btn-primary' id="edit">Edit</button>
-
-                        </div>
-                </div> 
-        </div>
-        `;
 
         if (username !== `${userpost.posted_by}`) {
                 element.innerHTML = `
@@ -390,11 +370,15 @@ function edit(e) {
                 console.log(update);
                 save(update, id, body);
                 buttonContainer.innerHTML = `<button type="button" data-editid="${id}" value="edit" class='btn btn-primary' id="edit">Edit</button>`;
+                // re-add the event listener
+                document.querySelector(`button[data-editid="${id}"]`).addEventListener('click', n => {
+                        edit(n);
+                });
         });
 }
 
 async function save(update, id, body) {
-        console.log(update);
+        console.log(id);
         await fetch(`save/${id}`, {
                 method: 'PUT',
                 body: JSON.stringify({
