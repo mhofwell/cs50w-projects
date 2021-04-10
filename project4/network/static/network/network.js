@@ -104,17 +104,18 @@ async function getPosts(group) {
                 if (newsfeed) {
                         newsfeed.innerHTML = '';
                 } else {
+                        const followingHeader = document.querySelector('#following-div');
                         const profileHeader = document.querySelector('#profile-container');
                         const profilePosts = document.querySelector('#userposts');
 
                         if (profileHeader && profilePosts) {
                                 profileHeader.innerHTML = '';
                                 profilePosts.innerHTML = '';
-                                const body = document.querySelector('body');
+
                                 const element = document.createElement('div');
                                 element.id = 'title';
                                 element.className = 'title';
-                                body.append(element);
+                                followingHeader.append(element);
                         }
                 }
 
@@ -195,6 +196,7 @@ async function getNumberOfPages() {
 }
 
 function nextPage() {
+        console.log(currentPage);
         currentPage += 1;
         loadList();
 }
@@ -215,15 +217,16 @@ function lastPage() {
         loadList();
 }
 
-function drawList() {
+async function drawList() {
         if (document.querySelector('#newsfeed')) {
                 document.querySelector('#newsfeed').innerHTML = '';
+        }
+        if (document.querySelector('#userposts')) {
+                document.querySelector('#userposts').innerHTML = '';
         }
         for (let r = 0; r < pageList.length; r++) {
                 if (document.querySelector('#newsfeed')) {
                         document.querySelector('#newsfeed').append(pageList[r]);
-                } else if (document.querySelector('#title')) {
-                        document.querySelector('#title').appendChild(pageList[r]);
                 } else {
                         document.querySelector('#userposts').appendChild(pageList[r]);
                 }
@@ -238,19 +241,19 @@ async function addLikeListener() {
         });
 }
 
-function loadList() {
+async function loadList() {
         const begin = (currentPage - 1) * numberPerPage;
         const end = begin + numberPerPage;
 
         pageList = list.slice(begin, end);
-        drawList(); // draws out our data
-        addLikeListener(); // adds an event listener for likes.
-        addEditListener(); // adds an event listener for editing.
-        likeCheck(); // sets the buttons to like or unlike
+        await drawList(); // draws out our data
+        await addLikeListener(); // adds an event listener for likes.
+        await addEditListener(); // adds an event listener for editing.
+        await likeCheck(); // sets the buttons to like or unlike
         check(); // determines the states of the pagination buttons
 }
 
-function check() {
+async function check() {
         document.getElementById('next').disabled = currentPage === numberOfPages;
         document.getElementById('previous').disabled = currentPage === 1;
         document.getElementById('first').disabled = currentPage === 1;
@@ -342,7 +345,7 @@ async function updateLikeCount(id) {
                 });
 }
 
-function addEditListener() {
+async function addEditListener() {
         document.querySelectorAll('#edit').forEach(button => {
                 button.addEventListener('click', e => {
                         edit(e);
