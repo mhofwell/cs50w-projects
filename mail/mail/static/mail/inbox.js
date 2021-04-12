@@ -23,8 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.querySelector('#submit').disabled = true;
                 }
         });
-
-        // By default, load the inbox
         load_mailbox('inbox');
 });
 
@@ -180,6 +178,7 @@ function compose_email() {
 
 function load_mailbox(mailbox) {
         // Show the mailbox and hide other views
+
         document.querySelector('#emails-view').style.display = 'block';
         document.querySelector('#compose-view').style.display = 'none';
         document.querySelector('#email-single-view').style.display = 'none';
@@ -245,8 +244,8 @@ function addEmail(email, mailbox) {
         document.querySelector('#emails-view').append(element);
 }
 
-function send() {
-        fetch('/emails', {
+async function send() {
+        await fetch('/emails', {
                 method: 'POST',
                 body: JSON.stringify({
                         recipients: document.querySelector('#compose-recipients').value,
@@ -257,6 +256,6 @@ function send() {
                 .then(response => response.json())
                 .then(result => {
                         console.log(result);
-                })
-                .then(load_mailbox('sent'));
+                });
+        load_mailbox('sent');
 }
