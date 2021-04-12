@@ -39,9 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateFollowButton(username);
                 });
         }
-        if (document.querySelector('#title')) {
-                const title = document.querySelector('#title');
-        }
 
         if (document.querySelector('#profile-name')) {
                 const profileName = document.querySelector('#profile-name').innerText;
@@ -158,7 +155,7 @@ function addPost(userpost) {
                 <div class="post-body" id="c${userpost.id}">${userpost.likes}</div>
                 <div class="button-row">
                         <div class="post-button" data-postid="${userpost.id}">
-                                <button type="button" data-buttonid="${userpost.id}" value="like" class='btn btn-primary' id="like">Like</button>
+                                <button type="button" data-buttonid="${userpost.id}" onclick=like(${userpost.id}) value="like" class='btn btn-primary' id="like">Like</button>
 
                         </div>
                 </div> 
@@ -175,7 +172,7 @@ function addPost(userpost) {
                 <div class="post-body" id="c${userpost.id}">${userpost.likes}</div>
                 <div class="button-row">
                         <div class="post-button" data-postid="${userpost.id}">
-                                <button type="button" data-buttonid="${userpost.id}" value="like" class='btn btn-primary' id="like">Like</button>
+                                <button type="button" data-buttonid="${userpost.id}" onclick=like(${userpost.id}) value="like" class='btn btn-primary' id="like">Like</button>
 
                         </div>
                         <div id="e${userpost.id}" class="post-button">
@@ -196,7 +193,6 @@ async function getNumberOfPages() {
 }
 
 function nextPage() {
-        console.log(currentPage);
         currentPage += 1;
         loadList();
 }
@@ -233,21 +229,12 @@ async function drawList() {
         }
 }
 
-async function addLikeListener() {
-        document.querySelectorAll('#like').forEach(button => {
-                button.addEventListener('click', e => {
-                        like(e);
-                });
-        });
-}
-
 async function loadList() {
         const begin = (currentPage - 1) * numberPerPage;
         const end = begin + numberPerPage;
 
         pageList = list.slice(begin, end);
         await drawList(); // draws out our data
-        await addLikeListener(); // adds an event listener for likes.
         await addEditListener(); // adds an event listener for editing.
         await likeCheck(); // sets the buttons to like or unlike
         check(); // determines the states of the pagination buttons
@@ -293,11 +280,12 @@ async function updateFollowerCount(username) {
                 });
 }
 
-async function like(e) {
-        const id = e.target.parentNode.dataset.postid;
-        const button = e.target;
+async function like(postId) {
+        const id = postId;
+        const button = document.querySelector(`button[data-buttonid="${postId}"]`);
         const state = button.innerText;
-        let likeBoolean = false;
+        console.log(state);
+        let likeBoolean = '';
 
         if (state === 'Like') {
                 button.innerText = 'Unlike';

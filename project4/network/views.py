@@ -50,11 +50,14 @@ def like(request, postid):
         user = User.objects.get(id=request.user.id)
         print(user)
         data = json.loads(request.body)
+        print(data)
         post = Post.objects.get(id=postid)
+        print(post)
         # Why is this giving me trouble?
         obj, create = Likes.objects.get_or_create(user=user)
 
         like_boolean = data.get("like", "")
+        print(like_boolean)
 
         if (like_boolean == "true"):
             post.likes += 1
