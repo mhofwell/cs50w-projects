@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('#compose').addEventListener('click', compose_email);
 
         // event listener for button submit
-        document.querySelector('#compose-form').onsubmit = send;
+        document.querySelector('#submit').onclick = send;
 
         // Check to see if all the compose form fields are filled before allowing a message to send.
         document.querySelector('#submit').disabled = true;
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.querySelector('#submit').disabled = true;
                 }
         });
+
         load_mailbox('inbox');
 });
 

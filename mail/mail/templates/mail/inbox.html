@@ -20,7 +20,7 @@
 <div id="compose-view">
     <h3>New Email</h3>
     <hr>
-    <form id="compose-form">
+    <div id="compose-form">
         <div class="form-group">
             From: <input disabled class="form-control" value="{{ request.user.email }}">
         </div>
@@ -31,8 +31,8 @@
             <input class="form-control" id="compose-subject" placeholder="Subject">
         </div>
         <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
-        <input type="submit" class="btn btn-primary" id="submit" value="Send" />
-    </form>
+        <input type="submit" onclick=send() class="btn btn-primary" id="submit" value="Send" />
+    </div>
 </div>
 
 
